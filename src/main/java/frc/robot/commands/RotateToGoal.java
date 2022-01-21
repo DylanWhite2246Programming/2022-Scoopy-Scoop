@@ -16,17 +16,18 @@ public class RotateToGoal extends PIDCommand {
   /** Creates a new RotateToAngle. */
   public RotateToGoal(Drivetrain drivetrain, DoubleSupplier x) {
     super(
-        // The controller that the command will use
-        drivetrain.getController(),
-        // This should return the measurement
-        drivetrain.getRotation2d()::getRadians,
-        // This should return the setpoint (can also be a constant)
-        () -> Math.atan2(drivetrain.getPose().getY(), drivetrain.getPose().getX()),
-        // This uses the output
-        output -> {
-          drivetrain.drive(x.getAsDouble(), output);
-        });
-    // Use addRequirements() here to declare subsystem dependencies.
+      // The controller that the command will use
+      drivetrain.getController(),
+      // This should return the measurement
+      drivetrain.getRotation2d()::getRadians,
+      // This should return the setpoint (can also be a constant)
+      () -> Math.atan2(drivetrain.getPose().getY(), drivetrain.getPose().getX()),
+      // This uses the output
+      output -> {
+        drivetrain.drive(x.getAsDouble(), output);
+      }
+    );
+    addRequirements(drivetrain);
     // Configure additional PID options by calling `getController` here.
   }
 
