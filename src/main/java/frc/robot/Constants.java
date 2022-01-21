@@ -27,6 +27,7 @@ import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstrai
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+    public static final double kG = 9.807;
     public static double deadzone = .025;
     public static double joystickTune(double x){
         return Math.abs(x)>deadzone ? Math.signum(x)*x*x : 0;
@@ -39,14 +40,17 @@ public final class Constants {
         public static final int kLeft2CANID = 2;
         public static final int kRight1CANID = 3;
         public static final int kRight2CANID = 4;
-        public static final int kIntakeCANID = 5;
-        public static final int kRollerCANID = 6;
-        public static final int kLifterCANID = 7;
+        public static final int kRollerCANID = 5;
+        public static final int kLifterCANID = 6;
+        public static final int kLeftShooterCANID = 7;
+        public static final int kRightShooterCANID = 8;
         //PCM ports
         public static final int[] climber1Ports = new int[]{0,1};
         public static final int[] climber2Ports = new int[]{2,3};
         //DIO might be unnessisary
-        public static final int klifterEncoderPort = 0;
+        public static final int kLifterEncoderPort = 0;
+        public static final int[] kLeftShooterEncoderPorts = new int[]{1,2};
+        public static final int[] kRightShooterEncoderPorts = new int[]{3,4};
         //Robot USB
         //Controller Ports
         public static final int[] kUSBPorts = new int[]{0,1,2,3};
@@ -108,8 +112,16 @@ public final class Constants {
             = new DifferentialDriveKinematics(kTrackWidth);
     }
     public static final class ScoopConstants{
-        public static final double g = 9.807;
         public static final double velocity = 0;
+        public static final boolean kLeftEncoderReversed = false;
+        public static final boolean kRightEncoderReversed = false;
+        public static final boolean kLeftMotorInverted = false;
+        public static final boolean kRightMotorInverted = false;
+        //METERS
+        public static final double kWheelDiameter = 4/39.37;
+        public static final int kCPR = 8196;
+        //RADIANS
+        public static final double kDistancePerPulse = (Math.PI*2)/kCPR;
     }
     public static final class LifterConstants{
         public static final boolean kEncoderReversed = false;
@@ -119,15 +131,17 @@ public final class Constants {
         /**radians */
         public static final double kClimbPosition = 0;
         /**radians */
-        public static final double kOffSet = .175;
+        public static final double kOffSet = .174533;
         /**radians/sec */
         public static final double kMaxVelocity = 0;
         /**radians/sec^2 */
         public static final double kMaxAcceleration = 0;
+        /**meters */
+        public static final double kClosestDistance = 0;
+        public static final double kMaxDistance = 0;
     }
     public static final class MotorControllerValues{
         public static final double kIntakeValue = .3;
-        public static final double kShootValue = .8;
         public static final double kRollerValues = .25;
         public static final double kClimbSpeed = .75;
     }

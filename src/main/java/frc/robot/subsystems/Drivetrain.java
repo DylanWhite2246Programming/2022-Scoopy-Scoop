@@ -92,7 +92,7 @@ public class Drivetrain extends SubsystemBase {
   private double getRightDistance(){return right1.getEncoder().getPosition();}
 
   
-  public double getAverageEncoderDistance(){return (left1.getEncoder().getPosition()+left1.getEncoder().getPosition())/2.0;}
+  public double getAverageEncoderDistance(){return (left1.getEncoder().getPosition()+right1.getEncoder().getPosition())/2.0;}
   public void resetEncoders(){
     left1.getEncoder().setPosition(0);
     right1.getEncoder().setPosition(0);

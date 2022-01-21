@@ -13,13 +13,13 @@ import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import frc.robot.Constants.LifterConstants;
 import frc.robot.Constants.Ports;
-import frc.robot.Constants.ScoopConstants;
 
 public class Lifter extends ProfiledPIDSubsystem {
   private final WPI_VictorSPX motor = new WPI_VictorSPX(Ports.kLifterCANID);
-  private final DutyCycleEncoder encoder = new DutyCycleEncoder(Ports.klifterEncoderPort);
+  private final DutyCycleEncoder encoder = new DutyCycleEncoder(Ports.kLifterEncoderPort);
+  //TODO add limits?
   //TODO find these values
-  private final ArmFeedforward feedforward = new ArmFeedforward(0, 9.807, 0, 0);
+  private final ArmFeedforward feedforward = new ArmFeedforward(0, 0, 0, 0);
   /** Creates a new Lifter. */
   public Lifter() {
     super(
@@ -36,10 +36,13 @@ public class Lifter extends ProfiledPIDSubsystem {
       )
     );
     encoder.setDistancePerRotation(2*Math.PI);
+    encoder.reset();
+    motor.setSafetyEnabled(false);
   }
   //TODO change values
   private double calculateLaunchAngle(double distance){
-    return Math.asin((distance*9.807)/Math.pow(ScoopConstants.velocity,2));
+    //return Math.asin((distance*Constants.kG)/Math.pow(ScoopConstants.velocity,2));
+    return 0;
   }
   public void aim(double distance){
     getController().setPID(
@@ -48,7 +51,12 @@ public class Lifter extends ProfiledPIDSubsystem {
       LifterConstants.kD
     );
     if(isEnabled()==false){enable();}
-    setGoal(calculateLaunchAngle(distance)); 
+    if(
+      distance>LifterConstants.kMaxDistance
+      ||distance<LifterConstants.kClosestDistance
+    ){
+      setGoal(calculateLaunchAngle(distance)); 
+    }
   }
   /**
    * @param angle angle value in radians
@@ -71,14 +79,10 @@ public class Lifter extends ProfiledPIDSubsystem {
   @Override
   public void useOutput(double output, TrapezoidProfile.State setpoint) {
     var a = feedforward.calculate(setpoint.position, setpoint.velocity);
-    if(isEnabled()){
-      motor.setVoltage(output+a);
-    }else{
-      motor.stopMotor();
-    }
+    motor.setVoltage(a+output);
   }
   @Override
   public double getMeasurement() {
-    return encoder.getDistance()+LifterConstants.kOffSet;
+    return encoder.getDistance()-LifterConstants.kOffSet;
   }
 }
