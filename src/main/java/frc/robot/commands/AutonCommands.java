@@ -23,6 +23,7 @@ public class AutonCommands {
             AutonCommandConstants.leftController, 
             AutonCommandConstants.rightController, 
             drivetrain::driveVolts, 
-            drivetrain);
+            drivetrain
+        );
     }
 }

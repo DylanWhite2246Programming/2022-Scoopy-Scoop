@@ -69,8 +69,8 @@ public class Drivetrain extends SubsystemBase {
   
   public void drive(double x, double z){
     if(z==0){//inputs must be pasted through deadzone filter.
-      drive.arcadeDrive(x, controller.calculate(getTurnRate()));
-    }else{drive.arcadeDrive(x, z);}
+      drive.arcadeDrive(x, controller.calculate(getTurnRate()), false);
+    }else{drive.arcadeDrive(x, z, false);}
   }
 
   public void driveVolts(double leftVolts, double rightVolts){
@@ -123,6 +123,8 @@ public class Drivetrain extends SubsystemBase {
   public double getHeadingRads(){return NAVX.getRotation2d().getRadians();}
 
   public double getTurnRate(){return -NAVX.getRate();}
+
+  public PIDController getController(){return controller;}
 
 
   @Override
