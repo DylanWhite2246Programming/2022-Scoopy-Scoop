@@ -14,10 +14,10 @@ public class Drivestation extends SubsystemBase {
   private GenericHID buttonboardB;
   private Joystick leftStick;
   private Joystick rightStick;
-  private Button[] buttonBoardButtons;
-  private Button[] leftStickButtons;
-  private Button[] rightStickButtons;
-  
+  private Button[] 
+    buttonBoardButtons, 
+    leftStickButtons, 
+    rightStickButtons;
   /**
    * A Subsystem that handles the custom drivestation
    * @param ports array of port values in the orded BBA, BBB, LS, RS
@@ -93,12 +93,15 @@ public class Drivestation extends SubsystemBase {
   public double getLeftY(){return tune(leftStick.getY());}
   public double getLeftZ(){return tune(leftStick.getZ());}
   public double getLeftSlider(){return leftStick.getThrottle();}
+  public int getLeftPov(){return leftStick.getPOV();}
+  public boolean leftPovEquals(int x){return getLeftPov()==x;}
 
   public double getRightX(){return tune(rightStick.getX());}
   public double getRightY(){return tune(rightStick.getY());}
   public double getRightZ(){return tune(rightStick.getZ());}
   public double getRightSlider(){return rightStick.getThrottle();}
-
+  public int getRightPov(){return rightStick.getPOV();}
+  public boolean rightPovEquals(int x){return getRightPov()==x;}
 
   @Override
   public void periodic() {
