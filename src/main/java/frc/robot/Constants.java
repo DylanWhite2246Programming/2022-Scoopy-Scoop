@@ -27,7 +27,7 @@ import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstrai
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static final double kG = 9.807;
+    public static final double kG = 9.8066;
     public static double deadzone = .025;
     public static double joystickTune(double x){
         return Math.abs(x)>deadzone ? Math.signum(x)*x*x : 0;
@@ -67,6 +67,25 @@ public final class Constants {
             AutonCommandConstants.trajectoryConfig
         );
 
+    }
+    public static final class FieldConstants{
+       public static final class StartingPoses{
+           //TODO change
+           public static final Pose2d red1  = new Pose2d(0, 0, new Rotation2d(0));
+           public static final Pose2d red2  = new Pose2d(0, 0, new Rotation2d(0));
+           public static final Pose2d red3  = new Pose2d(0, 0, new Rotation2d(0));
+           public static final Pose2d blue1 = new Pose2d(0, 0, new Rotation2d(0));
+           public static final Pose2d blue2 = new Pose2d(0, 0, new Rotation2d(0));
+           public static final Pose2d blue3 = new Pose2d(0, 0, new Rotation2d(0));
+       } 
+       public static final class Balls{
+           public static final Pose2d red1  = new Pose2d(0, 0, new Rotation2d(0));
+           public static final Pose2d red2  = new Pose2d(0, 0, new Rotation2d(0));
+           public static final Pose2d red3  = new Pose2d(0, 0, new Rotation2d(0));
+           public static final Pose2d blue1 = new Pose2d(0, 0, new Rotation2d(0));
+           public static final Pose2d blue2 = new Pose2d(0, 0, new Rotation2d(0));
+           public static final Pose2d blue3 = new Pose2d(0, 0, new Rotation2d(0));
+       }
     }
     public static final class AutonCommandConstants{
         public static final double kMaxVoltage = 10.0;
