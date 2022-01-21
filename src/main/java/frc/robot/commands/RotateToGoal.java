@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import frc.robot.subsystems.Drivetrain;
 
@@ -12,7 +14,7 @@ import frc.robot.subsystems.Drivetrain;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class RotateToGoal extends PIDCommand {
   /** Creates a new RotateToAngle. */
-  public RotateToGoal(Drivetrain drivetrain) {
+  public RotateToGoal(Drivetrain drivetrain, DoubleSupplier x) {
     super(
         // The controller that the command will use
         drivetrain.getController(),
@@ -22,7 +24,7 @@ public class RotateToGoal extends PIDCommand {
         () -> Math.atan2(drivetrain.getPose().getY(), drivetrain.getPose().getX()),
         // This uses the output
         output -> {
-          drivetrain.drive(0, output);
+          drivetrain.drive(x.getAsDouble(), output);
         });
     // Use addRequirements() here to declare subsystem dependencies.
     // Configure additional PID options by calling `getController` here.
