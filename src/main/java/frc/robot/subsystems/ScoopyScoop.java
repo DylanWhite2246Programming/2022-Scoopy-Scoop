@@ -47,6 +47,9 @@ public class ScoopyScoop extends SubsystemBase {
   public ScoopyScoop() {
     leftEncoder.setDistancePerPulse(ScoopConstants.kDistancePerPulse);
     rightEncoder.setDistancePerPulse(ScoopConstants.kDistancePerPulse);
+    //TODO create constants
+    leftEncoder.setReverseDirection(false);
+    rightEncoder.setReverseDirection(false);
     leftShooter.setInverted(ScoopConstants.kLeftMotorInverted);
     rightShooter.setInverted(ScoopConstants.kRightMotorInverted);
   }
@@ -71,16 +74,18 @@ public class ScoopyScoop extends SubsystemBase {
    * @param setpoint desired velocity in radians per second
    */
   public void shoot(double setpoint){
-    leftPid.setSetpoint(setpoint);
-    rightPid.setSetpoint(setpoint);
     leftShooter.setVoltage(
       leftFeedForward.calculate(setpoint)
-        +leftPid.calculate(getLeftVelocity())
+        +leftPid.calculate(getLeftVelocity(), setpoint)
     );
     rightShooter.setVoltage(
       rightFeedforward.calculate(setpoint)
-        +rightPid.calculate(getRightVelocity())
+        +rightPid.calculate(getRightVelocity(), setpoint)
     );
+  }
+  public void shooterStop(){
+    leftShooter.stopMotor();
+    rightShooter.stopMotor();
   }
   public void rollerIntake(){
     rollers.set(MotorControllerValues.kRollerValues);
@@ -90,10 +95,6 @@ public class ScoopyScoop extends SubsystemBase {
   }
   public void rollerSTOP(){
     rollers.stopMotor();
-  }
-  public void shooterStop(){
-    leftShooter.stopMotor();
-    rightShooter.stopMotor();
   }
 
   @Override

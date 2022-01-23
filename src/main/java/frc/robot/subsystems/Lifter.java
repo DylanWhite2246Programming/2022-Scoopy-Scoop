@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import frc.robot.Constants.LifterConstants;
@@ -17,7 +18,8 @@ import frc.robot.Constants.Ports;
 public class Lifter extends ProfiledPIDSubsystem {
   private final WPI_VictorSPX motor = new WPI_VictorSPX(Ports.kLifterCANID);
   private final DutyCycleEncoder encoder = new DutyCycleEncoder(Ports.kLifterEncoderPort);
-  //TODO add limits?
+  private final DigitalInput toplimit = new DigitalInput(Ports.kTopLimitPort);
+  private final DigitalInput bottomlimit = new DigitalInput(Ports.kBottomLimitPort);
   //TODO find these values
   private final ArmFeedforward feedforward = new ArmFeedforward(0, 0, 0, 0);
   /** Creates a new Lifter. */
@@ -79,7 +81,20 @@ public class Lifter extends ProfiledPIDSubsystem {
   @Override
   public void useOutput(double output, TrapezoidProfile.State setpoint) {
     var a = feedforward.calculate(setpoint.position, setpoint.velocity);
-    motor.setVoltage(a+output);
+    if(toplimit.get()&&(a+output)<=0){
+      motor.setVoltage(a+output);
+    }else if(bottomlimit.get()&&(a+output>=0)){
+      motor.setVoltage(a+output);
+    }else{
+      motor.setVoltage(a+output);
+    }
+
+    if(
+      getMeasurement()>-LifterConstants.kOffSet+.1
+      && getMeasurement()<1.5708-LifterConstants.kOffSet
+    ){
+      motor.setVoltage(a+output);
+    }
   }
   @Override
   public double getMeasurement() {

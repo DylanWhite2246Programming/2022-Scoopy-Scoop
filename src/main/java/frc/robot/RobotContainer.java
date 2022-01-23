@@ -54,7 +54,8 @@ public class RobotContainer {
       .whenPressed(new RotateToGoal(
         drivetrain, 
         controller::getLeftX
-    ));
+      )
+    );
     controller.getLeftStickButtons()[0]
       .whileHeld(new RunCommand(()->drivetrain.setMaxOutput(1), drivetrain), true)
       .whenPressed(new RunCommand(()->drivetrain.setMaxOutput(.75), drivetrain), true);
