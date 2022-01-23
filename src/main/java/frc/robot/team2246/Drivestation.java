@@ -4,6 +4,7 @@
 
 package frc.robot.team2246;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -18,6 +19,8 @@ public class Drivestation extends SubsystemBase {
     buttonBoardButtons, 
     leftStickButtons, 
     rightStickButtons;
+  //TODO change
+  private SlewRateLimiter limiter = new SlewRateLimiter(.5);
   /**
    * A Subsystem that handles the custom drivestation
    * @param ports array of port values in the orded BBA, BBB, LS, RS
@@ -90,14 +93,14 @@ public class Drivestation extends SubsystemBase {
   private double tune(double x){return Math.signum(x)*x*x;}
 
   public double getLeftX(){return tune(leftStick.getX());}
-  public double getLeftY(){return tune(leftStick.getY());}
+  public double getLeftY(){return limiter.calculate(tune(leftStick.getY()));}
   public double getLeftZ(){return tune(leftStick.getZ());}
   public double getLeftSlider(){return leftStick.getThrottle();}
   public int getLeftPov(){return leftStick.getPOV();}
   public boolean leftPovEquals(int x){return getLeftPov()==x;}
 
   public double getRightX(){return tune(rightStick.getX());}
-  public double getRightY(){return tune(rightStick.getY());}
+  public double getRightY(){return limiter.calculate(tune(rightStick.getY()));}
   public double getRightZ(){return tune(rightStick.getZ());}
   public double getRightSlider(){return rightStick.getThrottle();}
   public int getRightPov(){return rightStick.getPOV();}
