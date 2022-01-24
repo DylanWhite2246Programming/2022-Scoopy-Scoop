@@ -62,6 +62,8 @@ public class RobotContainer {
     controller.getRightStickButtons()[0]
       .whileHeld(new RunCommand(()->drivetrain.setMaxOutput(.3), drivetrain), true)
       .whenReleased(new RunCommand(()->drivetrain.setMaxOutput(.75), drivetrain), true);
+    controller.getRightStickButtons()[1]
+      .whileHeld(new RotateToGoal(drivetrain, controller::getLeftY), false);
   }
 
   /**

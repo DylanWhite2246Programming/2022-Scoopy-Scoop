@@ -11,6 +11,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
@@ -69,7 +70,7 @@ public class Drivetrain extends SubsystemBase {
   
   public void drive(double x, double z){
     if(z==0){//inputs must be pasted through deadzone filter.
-      drive.arcadeDrive(x, controller.calculate(getTurnRate()), false);
+      drive.arcadeDrive(x, controller.calculate(getChassisSpeed().omegaRadiansPerSecond), false);
     }else{drive.arcadeDrive(x, z, false);}
   }
 
@@ -98,8 +99,8 @@ public class Drivetrain extends SubsystemBase {
     right1.getEncoder().setPosition(0);
   }
   
-  public double getChassisSpeed(){
-    return kinematics.toChassisSpeeds(getWheelSpeeds()).vxMetersPerSecond;
+  public ChassisSpeeds getChassisSpeed(){
+    return kinematics.toChassisSpeeds(getWheelSpeeds());
   }
   public DifferentialDriveWheelSpeeds getWheelSpeeds(){
     return new DifferentialDriveWheelSpeeds(
