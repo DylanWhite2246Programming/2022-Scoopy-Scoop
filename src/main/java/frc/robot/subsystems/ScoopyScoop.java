@@ -8,6 +8,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MotorControllerValues;
@@ -29,6 +30,10 @@ public class ScoopyScoop extends SubsystemBase {
     Ports.kRightShooterEncoderPorts[1], 
     ScoopConstants.kRightEncoderReversed
   );
+
+  private final DigitalInput entrySensor = new DigitalInput(Ports.kEntrySensor);
+  private final DigitalInput firstBallSensor = new DigitalInput(Ports.kFirstBallSensor);
+  private final DigitalInput secondBallSensor = new DigitalInput(Ports.kSecondBallSensor);
 
   //TODO change
   private final SimpleMotorFeedforward leftFeedForward 
@@ -54,10 +59,6 @@ public class ScoopyScoop extends SubsystemBase {
     rightShooter.setInverted(ScoopConstants.kRightMotorInverted);
   }
 
-  public void Shoot(){
-    leftShooter.set(-MotorControllerValues.kIntakeValue);
-    rightShooter.set(-MotorControllerValues.kIntakeValue);
-  }
   /**
    * @return left shooter speed in radians per second
    */
@@ -86,6 +87,22 @@ public class ScoopyScoop extends SubsystemBase {
   public void shooterStop(){
     leftShooter.stopMotor();
     rightShooter.stopMotor();
+  }
+  public void intake(){
+    intakeShooter();
+    if(firstBallSensor.get()==false
+      &&secondBallSensor.get()==false
+    ){
+      rollerIntake();
+    }else if(firstBallSensor.get()){
+      if(entrySensor.get()){
+        rollerIntake();
+      }else{rollerSTOP();}
+    }else{rollerSTOP();}
+  }
+  public void intakeShooter(){
+    leftShooter.set(-MotorControllerValues.kIntakeValue);
+    rightShooter.set(-MotorControllerValues.kIntakeValue);
   }
   public void rollerIntake(){
     rollers.set(MotorControllerValues.kRollerValues);
