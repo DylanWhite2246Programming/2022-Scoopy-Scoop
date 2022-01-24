@@ -53,8 +53,9 @@ public final class Constants {
         public static final int[] kRightShooterEncoderPorts = new int[]{3,4};
         public static final int kBottomLimitPort = 5;
         public static final int kTopLimitPort = 6;
-        public static final int kFirstBallSensor = 7;
-        public static final int kSecondBallSensor = 8;
+        public static final int kEntrySensor = 7;
+        public static final int kFirstBallSensor = 8;
+        public static final int kSecondBallSensor = 9;
         //Robot USB
         //Controller Ports
         public static final int[] kUSBPorts = new int[]{0,1,2,3};

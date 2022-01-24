@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.MotorControllerValues;
 import frc.robot.Constants.Ports;
 import frc.robot.Constants.ScoopConstants;
@@ -98,11 +99,8 @@ public class ScoopyScoop extends SubsystemBase {
       rollerIntake();
     }else if(firstBallSensor.get()){
       if(entrySensor.get()){
-        new ConditionalCommand(
-          new RunCommand(()->rollerSTOP(), this), 
-          new RunCommand(()->rollerIntake(), this), 
-          secondBallSensor::get
-        );
+        new RunCommand(()->rollerIntake(), this)
+          .raceWith(new WaitUntilCommand(secondBallSensor::get));
       }else{rollerSTOP();}
     }else{rollerSTOP();}
   }
