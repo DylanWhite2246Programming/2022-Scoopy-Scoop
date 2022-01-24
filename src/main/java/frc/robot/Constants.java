@@ -53,6 +53,8 @@ public final class Constants {
         public static final int[] kRightShooterEncoderPorts = new int[]{3,4};
         public static final int kBottomLimitPort = 5;
         public static final int kTopLimitPort = 6;
+        public static final int kFirstBallSensor = 7;
+        public static final int kSecondBallSensor = 8;
         //Robot USB
         //Controller Ports
         public static final int[] kUSBPorts = new int[]{0,1,2,3};
@@ -151,14 +153,17 @@ public final class Constants {
         public static final double kDistancePerPulse = (Math.PI*2)/kCPR;
     }
     public static final class LifterConstants{
-        public static final boolean kEncoderReversed = false;
         public static final double kP = 0, kI = 0, kD = 0;
+        public static final int kMotorSproketToothCount = 1;   
+        public static final int kAxelSproketToothCount = 1;   
+        /**radians */
+        public static final double kConversionFactor = (double)(2*Math.PI*kAxelSproketToothCount)/kMotorSproketToothCount;
         /**radians*/
         public static final double kSecondClimbingPosition = 0;
         /**radians */
         public static final double kClimbPosition = 0;
         /**radians */
-        public static final double kOffSet = .174533;
+        public static final double kOffSet = .174533; //10 degrees
         /**radians/sec */
         public static final double kMaxVelocity = 0;
         /**radians/sec^2 */

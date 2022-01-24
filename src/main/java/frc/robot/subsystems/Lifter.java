@@ -4,20 +4,19 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import frc.robot.Constants.LifterConstants;
 import frc.robot.Constants.Ports;
 
 public class Lifter extends ProfiledPIDSubsystem {
-  private final WPI_VictorSPX motor = new WPI_VictorSPX(Ports.kLifterCANID);
-  private final DutyCycleEncoder encoder = new DutyCycleEncoder(Ports.kLifterEncoderPort);
+  private final CANSparkMax motor = new CANSparkMax(Ports.kLifterCANID, MotorType.kBrushless);
   private final DigitalInput toplimit = new DigitalInput(Ports.kTopLimitPort);
   private final DigitalInput bottomlimit = new DigitalInput(Ports.kBottomLimitPort);
   //TODO find these values
@@ -37,9 +36,8 @@ public class Lifter extends ProfiledPIDSubsystem {
         )
       )
     );
-    encoder.setDistancePerRotation(2*Math.PI);
-    encoder.reset();
-    motor.setSafetyEnabled(false);
+    motor.getEncoder().setPosition(-LifterConstants.kOffSet);
+    motor.getEncoder().setPositionConversionFactor(LifterConstants.kConversionFactor);
   }
   //TODO change values
   private double calculateLaunchAngle(double distance){
@@ -81,23 +79,22 @@ public class Lifter extends ProfiledPIDSubsystem {
   @Override
   public void useOutput(double output, TrapezoidProfile.State setpoint) {
     var a = feedforward.calculate(setpoint.position, setpoint.velocity);
-    if(toplimit.get()&&(a+output)<=0){
-      motor.setVoltage(a+output);
-    }else if(bottomlimit.get()&&(a+output>=0)){
-      motor.setVoltage(a+output);
+    var outputVolts = a+output;
+    if(toplimit.get()&&outputVolts<=0){
+      motor.setVoltage(outputVolts);
+    }else if(bottomlimit.get()&&outputVolts>=0){
+      motor.setVoltage(outputVolts);
     }else{
-      motor.setVoltage(a+output);
-    }
-
-    if(
-      getMeasurement()>-LifterConstants.kOffSet+.1
-      && getMeasurement()<1.5708-LifterConstants.kOffSet
-    ){
-      motor.setVoltage(a+output);
+      if(
+        getMeasurement()>-LifterConstants.kOffSet+.1
+        && getMeasurement()<1.5708-LifterConstants.kOffSet
+      ){
+        motor.setVoltage(outputVolts);
+      }
     }
   }
   @Override
   public double getMeasurement() {
-    return encoder.getDistance()-LifterConstants.kOffSet;
+    return motor.getEncoder().getPosition();
   }
 }
