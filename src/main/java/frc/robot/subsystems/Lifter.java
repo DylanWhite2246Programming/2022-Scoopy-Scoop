@@ -85,12 +85,7 @@ public class Lifter extends ProfiledPIDSubsystem {
     }else if(bottomlimit.get()&&outputVolts>=0){
       motor.setVoltage(outputVolts);
     }else{
-      if(
-        getMeasurement()>-LifterConstants.kOffSet+.1
-        && getMeasurement()<1.5708-LifterConstants.kOffSet
-      ){
-        motor.setVoltage(outputVolts);
-      }
+      motor.stopMotor();
     }
   }
   @Override
