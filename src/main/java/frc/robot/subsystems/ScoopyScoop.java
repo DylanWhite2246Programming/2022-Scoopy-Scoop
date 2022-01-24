@@ -10,6 +10,8 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.MotorControllerValues;
 import frc.robot.Constants.Ports;
@@ -96,7 +98,11 @@ public class ScoopyScoop extends SubsystemBase {
       rollerIntake();
     }else if(firstBallSensor.get()){
       if(entrySensor.get()){
-        rollerIntake();
+        new ConditionalCommand(
+          new RunCommand(()->rollerSTOP(), this), 
+          new RunCommand(()->rollerIntake(), this), 
+          secondBallSensor::get
+        );
       }else{rollerSTOP();}
     }else{rollerSTOP();}
   }
