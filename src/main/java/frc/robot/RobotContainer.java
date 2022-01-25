@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Button;
 
 /**
@@ -42,7 +43,12 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(
       new RunCommand(()->drivetrain.drive(controller.getLeftY(),controller.getRightX()), drivetrain)
     );
-    scoop.setDefaultCommand(new RunCommand(()->scoop.shooterStop(), scoop));
+    scoop.setDefaultCommand(
+      new ParallelCommandGroup(
+        new RunCommand(()->scoop.shooterSTOP(), scoop),
+        new RunCommand(()->scoop.rollerSTOP(), scoop)
+      )
+    );
   }
 
   /**
@@ -52,41 +58,60 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    new Button(()->controller.rightPovEquals(0))
+    //POV
+    new Button(()->controller.leftPovEquals(0))
       .whenPressed(new InstantCommand(()->climber.extendBackSolenoid()));
-    new Button(()->controller.rightPovEquals(180))
+    new Button(()->controller.leftPovEquals(180))
       .whenPressed(new InstantCommand(()->climber.retrackBackSolenoid()));
+    //left stick
     controller.ls0
       .whileHeld(new RunCommand(()->drivetrain.setMaxOutput(1), drivetrain), true)
       .whenPressed(new RunCommand(()->drivetrain.setMaxOutput(.75), drivetrain), true);
+    //rightstick
     controller.rs0
       .whileHeld(new RunCommand(()->drivetrain.setMaxOutput(.3), drivetrain), true)
       .whenReleased(new RunCommand(()->drivetrain.setMaxOutput(.75), drivetrain), true);
     controller.rs1
       .whileHeld(new FacePose(new Translation2d(0,0), controller::getLeftY, drivetrain), false);
-    
-    controller.b20
-      .whileHeld(
-        new ParallelCommandGroup(
-          new ConditionalCommand(
-            new ConditionalCommand( //run when first sensor is true
-              new RunCommand(()->scoop.rollerIntake(), scoop) //run when a ball comes in
-                .withInterrupt(scoop::getSecondSensor)
-                .withTimeout(3), 
-              new RunCommand(()->scoop.rollerSTOP(), scoop), //run while there are no balls coming in
-              scoop::getEntrySensor
-            ), 
-            new RunCommand(()->scoop.rollerIntake(), scoop), //run when first sensor is false
-            scoop::getFirstSensor
-          ),
-          new RunCommand(()->scoop.intakeShooter(), scoop) //run the hole time
-        ).andThen(
-          new ParallelCommandGroup(
-            new InstantCommand(()->scoop.shooterStop()),
-            new InstantCommand(()->scoop.rollerSTOP()))
+    //switch row 0
+    controller.s00.whileHeld(new InstantCommand(()->scoop.shoot(0/3), scoop));
+    //switch row 1
+    //button row 0
+    controller.b00.whileHeld(new InstantCommand(()->scoop.rollerIntake(), scoop));
+    controller.b01.whileHeld(new InstantCommand(()->scoop.rollerShoot(), scoop));
+    controller.b02.whileHeld(new InstantCommand(()->climber.extendLifterSolenoid(), climber));
+    //button row 1
+    controller.b10.whileHeld(new InstantCommand(()->scoop.intake(), scoop));
+    controller.b11.whileHeld(new InstantCommand(()->scoop.shoot(0), scoop));
+    controller.b12.whileHeld(new InstantCommand(()->climber.retrackLifterSolenoid(), climber));
+    //button row 2
+    controller.b20.whileHeld(
+      new ParallelCommandGroup(
+        new ConditionalCommand(
+          new ConditionalCommand( //run when first sensor is true
+            new RunCommand(()->scoop.rollerIntake(), scoop) //run when a ball comes in
+              .withInterrupt(scoop::getSecondSensor),
+            new RunCommand(()->scoop.rollerSTOP(), scoop), //run while there are no balls coming in
+            scoop::getEntrySensor
           ), 
-        false
-      );
+          new RunCommand(()->scoop.rollerIntake(), scoop), //run when first sensor is false
+          scoop::getFirstSensor
+        ),
+        new RunCommand(()->scoop.intake(), scoop) //run the hole time
+      ), 
+      false
+    );
+    controller.b21.whileHeld(
+      new ConditionalCommand(
+        new SequentialCommandGroup(
+          new RunCommand(()->scoop.shoot(0), scoop),
+          new RunCommand(()->scoop.rollerShoot(), scoop)), 
+        new SequentialCommandGroup(
+          new RunCommand(()->scoop.shoot(0), scoop),
+          new RunCommand(()->scoop.rollerSTOP(), scoop)), 
+        scoop::shooterAtSetpoint), 
+      false
+    );
   }
 
   /**

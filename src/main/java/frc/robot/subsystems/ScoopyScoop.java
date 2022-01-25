@@ -84,11 +84,16 @@ public class ScoopyScoop extends SubsystemBase {
         +rightPid.calculate(getRightVelocity(), setpoint)
     );
   }
-  public void shooterStop(){
+  public void shooterSTOP(){
     leftShooter.stopMotor();
     rightShooter.stopMotor();
+    shoot(0);
   }
-  public void intakeShooter(){
+  public boolean shooterAtSetpoint(){
+    return leftPid.atSetpoint()&&
+      rightPid.atSetpoint();
+  }
+  public void intake(){
     leftShooter.set(-MotorControllerValues.kIntakeValue);
     rightShooter.set(-MotorControllerValues.kIntakeValue);
   }
