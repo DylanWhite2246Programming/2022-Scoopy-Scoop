@@ -48,14 +48,13 @@ public final class Constants {
         public static final int[] climber1Ports = new int[]{0,1};
         public static final int[] climber2Ports = new int[]{2,3};
         //DIO might be unnessisary
-        public static final int kLifterEncoderPort = 0;
-        public static final int[] kLeftShooterEncoderPorts = new int[]{1,2};
-        public static final int[] kRightShooterEncoderPorts = new int[]{3,4};
-        public static final int kBottomLimitPort = 5;
-        public static final int kTopLimitPort = 6;
-        public static final int kEntrySensor = 7;
-        public static final int kFirstBallSensor = 8;
-        public static final int kSecondBallSensor = 9;
+        public static final int[] kLeftShooterEncoderPorts = new int[]{0,1};
+        public static final int[] kRightShooterEncoderPorts = new int[]{2,3};
+        public static final int kBottomLimitPort = 4;
+        public static final int kTopLimitPort = 5;
+        public static final int kEntrySensor = 6;
+        public static final int kFirstBallSensor = 7;
+        public static final int kSecondBallSensor = 8;
         //Robot USB
         //Controller Ports
         public static final int[] kUSBPorts = new int[]{0,1,2,3};
