@@ -12,6 +12,13 @@ public class Vision extends SubsystemBase {
   private static PhotonCamera cam = new PhotonCamera("cameraName");
   /** Creates a new Vision. */
   public Vision() {}
+  
+  /***
+   * @param index 0 blue, 1 red
+   */
+  public void setPipe(int index){
+    cam.setPipelineIndex(index);
+  }
 
   @Override
   public void periodic() {
