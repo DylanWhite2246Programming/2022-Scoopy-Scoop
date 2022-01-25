@@ -13,7 +13,6 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ScoopyScoop;
 import frc.robot.team2246.Drivestation;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -55,16 +54,16 @@ public class RobotContainer {
       .whenPressed(new InstantCommand(()->climber.extendBackSolenoid(), climber));
     new Button(()->controller.rightPovEquals(180))
       .whenPressed(new InstantCommand(()->climber.retrackBackSolenoid(), climber));
-    controller.getLeftStickButtons()[0]
+    controller.ls0
       .whileHeld(new RunCommand(()->drivetrain.setMaxOutput(1), drivetrain), true)
       .whenPressed(new RunCommand(()->drivetrain.setMaxOutput(.75), drivetrain), true);
-    controller.getRightStickButtons()[0]
+    controller.rs0
       .whileHeld(new RunCommand(()->drivetrain.setMaxOutput(.3), drivetrain), true)
       .whenReleased(new RunCommand(()->drivetrain.setMaxOutput(.75), drivetrain), true);
-    controller.getRightStickButtons()[1]
+    controller.rs1
       .whileHeld(new RotateToGoal(drivetrain, controller::getLeftY), false);
     
-    controller.getButtonBoardArray()[8]
+    controller.b20
       .whileHeld(
         new ParallelCommandGroup(
           new ConditionalCommand(
