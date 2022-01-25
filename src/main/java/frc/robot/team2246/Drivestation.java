@@ -11,16 +11,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Button;
 
 public class Drivestation extends SubsystemBase {
-  private GenericHID buttonboardA;
-  private GenericHID buttonboardB;
-  private Joystick leftStick;
-  private Joystick rightStick;
-  private Button[] 
-    buttonBoardButtons, 
-    leftStickButtons, 
-    rightStickButtons;
+  private static GenericHID buttonboardA;
+  private static GenericHID buttonboardB;
+  private static Joystick leftStick;
+  private static Joystick rightStick;
   //TODO change
   private SlewRateLimiter limiter = new SlewRateLimiter(.5);
+  private double tune(double x){return Math.signum(x)*x*x;}
   /**
    * A Subsystem that handles the custom drivestation
    * @param ports array of port values in the orded BBA, BBB, LS, RS
@@ -30,63 +27,58 @@ public class Drivestation extends SubsystemBase {
     buttonboardB = new GenericHID(ports[1]);
     leftStick = new Joystick(ports[2]);
     rightStick = new Joystick(ports[3]);
-    buttonBoardButtons = new Button[]{
-      new Button(()->buttonboardA.getRawButton(0)),
-      new Button(()->buttonboardA.getRawButton(1)),
-      new Button(()->buttonboardA.getRawButton(2)),
-      new Button(()->buttonboardA.getRawButton(3)),
-      new Button(()->buttonboardA.getRawButton(4)),
-      new Button(()->buttonboardA.getRawButton(5)),
-      new Button(()->buttonboardA.getRawButton(6)),
-      new Button(()->buttonboardA.getRawButton(7)),
-      new Button(()->buttonboardA.getRawButton(8)),
-      new Button(()->buttonboardA.getRawButton(9)),
-      new Button(()->buttonboardA.getRawButton(10)),
-      new Button(()->buttonboardA.getRawButton(11)),
-      new Button(()->buttonboardB.getRawButton(0)),
-      new Button(()->buttonboardB.getRawButton(1)),
-      new Button(()->buttonboardB.getRawButton(2)),
-      new Button(()->buttonboardB.getRawButton(3)),
-      new Button(()->buttonboardB.getRawButton(4)),
-      new Button(()->buttonboardB.getRawButton(5)),
-      new Button(()->buttonboardB.getRawButton(6)),
-      new Button(()->buttonboardB.getRawButton(7)),
-    };
-    leftStickButtons = new Button[]{
-      new Button(()->leftStick.getRawButton(0)),
-      new Button(()->leftStick.getRawButton(1)),
-      new Button(()->leftStick.getRawButton(2)),
-      new Button(()->leftStick.getRawButton(3)),
-      new Button(()->leftStick.getRawButton(4)),
-      new Button(()->leftStick.getRawButton(5)),
-      new Button(()->leftStick.getRawButton(6)),
-      new Button(()->leftStick.getRawButton(7)),
-      new Button(()->leftStick.getRawButton(8)),
-      new Button(()->leftStick.getRawButton(9)),
-      new Button(()->leftStick.getRawButton(10)),
-      new Button(()->leftStick.getRawButton(11))
-    };
-    rightStickButtons = new Button[]{
-      new Button(()->rightStick.getRawButton(0)),
-      new Button(()->rightStick.getRawButton(1)),
-      new Button(()->rightStick.getRawButton(2)),
-      new Button(()->rightStick.getRawButton(3)),
-      new Button(()->rightStick.getRawButton(4)),
-      new Button(()->rightStick.getRawButton(5)),
-      new Button(()->rightStick.getRawButton(6)),
-      new Button(()->rightStick.getRawButton(7)),
-      new Button(()->rightStick.getRawButton(8)),
-      new Button(()->rightStick.getRawButton(9)),
-      new Button(()->rightStick.getRawButton(10)),
-      new Button(()->rightStick.getRawButton(11))
-    };
   }
 
-  public Button[] getButtonBoardArray(){return buttonBoardButtons;}
-  public Button[] getLeftStickButtons(){return leftStickButtons;}
-  public Button[] getRightStickButtons(){return rightStickButtons;}
+  //ButtonBoard
+  public final Button s00 = new Button(()->buttonboardA.getRawButton(0));
+  public final Button s01 = new Button(()->buttonboardA.getRawButton(1));
+  public final Button s02 = new Button(()->buttonboardA.getRawButton(2));
+  public final Button s03 = new Button(()->buttonboardA.getRawButton(3));
+  public final Button s10 = new Button(()->buttonboardA.getRawButton(4));
+  public final Button s11 = new Button(()->buttonboardA.getRawButton(5));
+  public final Button s12 = new Button(()->buttonboardA.getRawButton(6));
+  public final Button s13 = new Button(()->buttonboardA.getRawButton(7));
 
-  private double tune(double x){return Math.signum(x)*x*x;}
+  public final Button b00 = new Button(()->buttonboardB.getRawButton(0));
+  public final Button b01 = new Button(()->buttonboardB.getRawButton(1));
+  public final Button b02 = new Button(()->buttonboardB.getRawButton(2));
+  public final Button b03 = new Button(()->buttonboardB.getRawButton(3));
+  public final Button b10 = new Button(()->buttonboardB.getRawButton(4));
+  public final Button b11 = new Button(()->buttonboardB.getRawButton(5));
+  public final Button b12 = new Button(()->buttonboardB.getRawButton(6));
+  public final Button b13 = new Button(()->buttonboardB.getRawButton(7));
+  public final Button b20 = new Button(()->buttonboardB.getRawButton(8));
+  public final Button b21 = new Button(()->buttonboardB.getRawButton(9));
+  public final Button b22 = new Button(()->buttonboardB.getRawButton(10));
+  public final Button b23 = new Button(()->buttonboardB.getRawButton(11));
+  
+  // left joystick 
+  public final Button ls0 = new Button(()->leftStick.getRawButton(0));
+  public final Button ls1 = new Button(()->leftStick.getRawButton(1));
+  public final Button ls2 = new Button(()->leftStick.getRawButton(2));
+  public final Button ls3 = new Button(()->leftStick.getRawButton(3));
+  public final Button ls4 = new Button(()->leftStick.getRawButton(4));
+  public final Button ls5 = new Button(()->leftStick.getRawButton(5));
+  public final Button ls6 = new Button(()->leftStick.getRawButton(6));
+  public final Button ls7 = new Button(()->leftStick.getRawButton(7));
+  public final Button ls8 = new Button(()->leftStick.getRawButton(8));
+  public final Button ls9 = new Button(()->leftStick.getRawButton(9));
+  public final Button ls10 = new Button(()->leftStick.getRawButton(10));
+  public final Button ls11 = new Button(()->leftStick.getRawButton(11));
+
+  //right joystick
+  public final Button rs0 = new Button(()->rightStick.getRawButton(0));
+  public final Button rs1 = new Button(()->rightStick.getRawButton(1));
+  public final Button rs2 = new Button(()->rightStick.getRawButton(2));
+  public final Button rs3 = new Button(()->rightStick.getRawButton(3));
+  public final Button rs4 = new Button(()->rightStick.getRawButton(4));
+  public final Button rs5 = new Button(()->rightStick.getRawButton(5));
+  public final Button rs6 = new Button(()->rightStick.getRawButton(6));
+  public final Button rs7 = new Button(()->rightStick.getRawButton(7));
+  public final Button rs8 = new Button(()->rightStick.getRawButton(8));
+  public final Button rs9 = new Button(()->rightStick.getRawButton(9));
+  public final Button rs10 = new Button(()->rightStick.getRawButton(10));
+  public final Button rs11 = new Button(()->rightStick.getRawButton(11));
 
   public double getLeftX(){return tune(leftStick.getX());}
   public double getLeftY(){return limiter.calculate(tune(leftStick.getY()));}
