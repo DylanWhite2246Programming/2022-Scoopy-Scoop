@@ -51,10 +51,6 @@ public class Drivestation extends SubsystemBase {
       new Button(()->buttonboardB.getRawButton(5)),
       new Button(()->buttonboardB.getRawButton(6)),
       new Button(()->buttonboardB.getRawButton(7)),
-      new Button(()->buttonboardB.getRawButton(8)),
-      new Button(()->buttonboardB.getRawButton(9)),
-      new Button(()->buttonboardB.getRawButton(10)),
-      new Button(()->buttonboardB.getRawButton(11))
     };
     leftStickButtons = new Button[]{
       new Button(()->leftStick.getRawButton(0)),
