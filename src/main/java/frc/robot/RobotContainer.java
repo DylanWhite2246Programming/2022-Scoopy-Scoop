@@ -10,9 +10,13 @@ import frc.robot.Constants.Ports;
 import frc.robot.commands.RotateToGoal;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.ScoopyScoop;
 import frc.robot.team2246.Drivestation;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandGroupBase;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 
@@ -26,6 +30,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Drivetrain drivetrain = new Drivetrain();
   private final Climber climber = new Climber();
+  private final ScoopyScoop scoop = new ScoopyScoop();
 
   private final Drivestation controller = new Drivestation(Ports.kUSBPorts);
   //private final Joystick controller = new Joystick(0);
@@ -50,12 +55,6 @@ public class RobotContainer {
       .whenPressed(new InstantCommand(()->climber.extendBackSolenoid(), climber));
     new Button(()->controller.rightPovEquals(180))
       .whenPressed(new InstantCommand(()->climber.retrackBackSolenoid(), climber));
-    controller.getLeftStickButtons()[3]
-      .whenPressed(new RotateToGoal(
-        drivetrain, 
-        controller::getLeftX
-      )
-    );
     controller.getLeftStickButtons()[0]
       .whileHeld(new RunCommand(()->drivetrain.setMaxOutput(1), drivetrain), true)
       .whenPressed(new RunCommand(()->drivetrain.setMaxOutput(.75), drivetrain), true);
@@ -64,6 +63,26 @@ public class RobotContainer {
       .whenReleased(new RunCommand(()->drivetrain.setMaxOutput(.75), drivetrain), true);
     controller.getRightStickButtons()[1]
       .whileHeld(new RotateToGoal(drivetrain, controller::getLeftY), false);
+    
+    controller.getButtonBoardArray()[8]
+      .whileHeld(
+        new ParallelCommandGroup(
+          new ConditionalCommand(
+            new ConditionalCommand( //run when first sensor is true
+              new RunCommand(()->scoop.rollerIntake(), scoop) //run when a ball comes in
+                .withInterrupt(scoop::getSecondSensor)
+                .withTimeout(3), 
+              new RunCommand(()->scoop.rollerSTOP(), scoop), //run while there are no balls coming in
+              scoop::getEntrySensor
+            ), 
+            //run when first sensor is false
+            new RunCommand(()->scoop.rollerIntake(), scoop), 
+            scoop::getFirstSensor
+          ),
+          new RunCommand(()->scoop.intakeShooter(), scoop) //run the hole time
+        ), 
+        false
+      );
   }
 
   /**
