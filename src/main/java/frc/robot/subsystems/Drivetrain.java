@@ -63,6 +63,8 @@ public class Drivetrain extends SubsystemBase {
 
     left1.getEncoder().setVelocityConversionFactor(DrivetrainConstants.kDistancePerRotation/60);
     right1.getEncoder().setVelocityConversionFactor(DrivetrainConstants.kDistancePerRotation/60);
+
+    NAVX.setAngleAdjustment(0);
   }
   
   public void setMaxOutput(double maxOutput){drive.setMaxOutput(maxOutput);}
@@ -122,6 +124,8 @@ public class Drivetrain extends SubsystemBase {
   public double getHeading(){return getRotation2d().getDegrees();}
   /**Radians */
   public double getHeadingRads(){return NAVX.getRotation2d().getRadians();}
+  /**Radians relative only to robot does not include starting pose*/
+  public double getAbsoluteHeading(){return Math.toRadians(NAVX.getAngleAdjustment());}
 
   public double getTurnRate(){return -NAVX.getRate();}
 
