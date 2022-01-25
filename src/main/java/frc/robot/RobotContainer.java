@@ -42,6 +42,7 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(
       new RunCommand(()->drivetrain.drive(controller.getLeftY(),controller.getRightX()), drivetrain)
     );
+    scoop.setDefaultCommand(new RunCommand(()->scoop.shooterStop(), scoop));
   }
 
   /**
@@ -52,9 +53,9 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     new Button(()->controller.rightPovEquals(0))
-      .whenPressed(new InstantCommand(()->climber.extendBackSolenoid(), climber));
+      .whenPressed(new InstantCommand(()->climber.extendBackSolenoid()));
     new Button(()->controller.rightPovEquals(180))
-      .whenPressed(new InstantCommand(()->climber.retrackBackSolenoid(), climber));
+      .whenPressed(new InstantCommand(()->climber.retrackBackSolenoid()));
     controller.ls0
       .whileHeld(new RunCommand(()->drivetrain.setMaxOutput(1), drivetrain), true)
       .whenPressed(new RunCommand(()->drivetrain.setMaxOutput(.75), drivetrain), true);
@@ -79,7 +80,11 @@ public class RobotContainer {
             scoop::getFirstSensor
           ),
           new RunCommand(()->scoop.intakeShooter(), scoop) //run the hole time
-        ), 
+        ).andThen(
+          new ParallelCommandGroup(
+            new InstantCommand(()->scoop.shooterStop()),
+            new InstantCommand(()->scoop.rollerSTOP()))
+          ), 
         false
       );
   }
