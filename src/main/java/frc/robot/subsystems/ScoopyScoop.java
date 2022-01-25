@@ -10,10 +10,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants.MotorControllerValues;
 import frc.robot.Constants.Ports;
 import frc.robot.Constants.ScoopConstants;
@@ -91,19 +88,6 @@ public class ScoopyScoop extends SubsystemBase {
     leftShooter.stopMotor();
     rightShooter.stopMotor();
   }
-  public void intake(){
-    intakeShooter();
-    if(firstBallSensor.get()==false
-      &&secondBallSensor.get()==false
-    ){
-      rollerIntake();
-    }else if(firstBallSensor.get()){
-      if(entrySensor.get()){
-        new RunCommand(()->rollerIntake(), this)
-          .raceWith(new WaitUntilCommand(secondBallSensor::get));
-      }else{rollerSTOP();}
-    }else{rollerSTOP();}
-  }
   public void intakeShooter(){
     leftShooter.set(-MotorControllerValues.kIntakeValue);
     rightShooter.set(-MotorControllerValues.kIntakeValue);
@@ -117,7 +101,9 @@ public class ScoopyScoop extends SubsystemBase {
   public void rollerSTOP(){
     rollers.stopMotor();
   }
-
+  public boolean getEntrySensor(){return entrySensor.get();}
+  public boolean getFirstSensor(){return firstBallSensor.get();}
+  public boolean getSecondSensor(){return secondBallSensor.get();}
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
