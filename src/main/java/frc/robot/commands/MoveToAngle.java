@@ -6,28 +6,29 @@ package frc.robot.commands;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import frc.robot.subsystems.Drivetrain;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class RotateToGoal extends PIDCommand {
-  /** Creates a new RotateToAngle. */
-  public RotateToGoal(Drivetrain drivetrain, DoubleSupplier x) {
+public class MoveToAngle extends PIDCommand {
+  /** Creates a new FaceAngle. */
+  public MoveToAngle(double angleRad, DoubleSupplier x, Drivetrain drivetrain) {
     super(
       // The controller that the command will use
-      drivetrain.getController(),
+      new PIDController(0, 0, 0),
       // This should return the measurement
-      drivetrain.getRotation2d()::getRadians,
+      drivetrain::getAbsoluteHeading,
       // This should return the setpoint (can also be a constant)
-      () -> Math.atan2(drivetrain.getPose().getY(), drivetrain.getPose().getX()),
+      angleRad,
       // This uses the output
       output -> {
-        drivetrain.drive(x.getAsDouble(), output);
-      }
-    );
+        drivetrain.computerDrive(x.getAsDouble(), output);
+      });
     addRequirements(drivetrain);
+    // Use addRequirements() here to declare subsystem dependencies.
     // Configure additional PID options by calling `getController` here.
   }
 

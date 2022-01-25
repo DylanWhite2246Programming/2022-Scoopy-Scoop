@@ -4,10 +4,11 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.Ports;
-import frc.robot.commands.RotateToGoal;
+import frc.robot.commands.FacePose;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ScoopyScoop;
@@ -61,7 +62,7 @@ public class RobotContainer {
       .whileHeld(new RunCommand(()->drivetrain.setMaxOutput(.3), drivetrain), true)
       .whenReleased(new RunCommand(()->drivetrain.setMaxOutput(.75), drivetrain), true);
     controller.rs1
-      .whileHeld(new RotateToGoal(drivetrain, controller::getLeftY), false);
+      .whileHeld(new FacePose(new Translation2d(0,0), controller::getLeftY, drivetrain), false);
     
     controller.b20
       .whileHeld(
@@ -74,8 +75,7 @@ public class RobotContainer {
               new RunCommand(()->scoop.rollerSTOP(), scoop), //run while there are no balls coming in
               scoop::getEntrySensor
             ), 
-            //run when first sensor is false
-            new RunCommand(()->scoop.rollerIntake(), scoop), 
+            new RunCommand(()->scoop.rollerIntake(), scoop), //run when first sensor is false
             scoop::getFirstSensor
           ),
           new RunCommand(()->scoop.intakeShooter(), scoop) //run the hole time

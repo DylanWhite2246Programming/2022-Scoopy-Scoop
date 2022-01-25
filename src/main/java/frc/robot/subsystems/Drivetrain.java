@@ -75,6 +75,9 @@ public class Drivetrain extends SubsystemBase {
       drive.arcadeDrive(x, controller.calculate(getChassisSpeed().omegaRadiansPerSecond), false);
     }else{drive.arcadeDrive(x, z, false);}
   }
+  public void computerDrive(double x, double z){
+    drive.arcadeDrive(x, z, false);
+  }
 
   public void driveVolts(double leftVolts, double rightVolts){
     left1.setVoltage(leftVolts);
@@ -129,7 +132,7 @@ public class Drivetrain extends SubsystemBase {
 
   public double getTurnRate(){return -NAVX.getRate();}
 
-  public PIDController getController(){return controller;}
+  public PIDController getTurnController(){return controller;}
 
 
   @Override
