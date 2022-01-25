@@ -39,16 +39,16 @@ public class Drivestation extends SubsystemBase {
   public final Button s12 = new Button(()->buttonboardA.getRawButton(6));
   public final Button s13 = new Button(()->buttonboardA.getRawButton(7));
 
-  public final Button b00 = new Button(()->buttonboardB.getRawButton(0));
-  public final Button b01 = new Button(()->buttonboardB.getRawButton(1));
-  public final Button b02 = new Button(()->buttonboardB.getRawButton(2));
-  public final Button b03 = new Button(()->buttonboardB.getRawButton(3));
-  public final Button b10 = new Button(()->buttonboardB.getRawButton(4));
-  public final Button b11 = new Button(()->buttonboardB.getRawButton(5));
-  public final Button b12 = new Button(()->buttonboardB.getRawButton(6));
-  public final Button b13 = new Button(()->buttonboardB.getRawButton(7));
-  public final Button b20 = new Button(()->buttonboardB.getRawButton(8));
-  public final Button b21 = new Button(()->buttonboardB.getRawButton(9));
+  public final Button b00 = new Button(()->buttonboardB.getRawButton( 0));
+  public final Button b01 = new Button(()->buttonboardB.getRawButton( 1));
+  public final Button b02 = new Button(()->buttonboardB.getRawButton( 2));
+  public final Button b03 = new Button(()->buttonboardB.getRawButton( 3));
+  public final Button b10 = new Button(()->buttonboardB.getRawButton( 4));
+  public final Button b11 = new Button(()->buttonboardB.getRawButton( 5));
+  public final Button b12 = new Button(()->buttonboardB.getRawButton( 6));
+  public final Button b13 = new Button(()->buttonboardB.getRawButton( 7));
+  public final Button b20 = new Button(()->buttonboardB.getRawButton( 8));
+  public final Button b21 = new Button(()->buttonboardB.getRawButton( 9));
   public final Button b22 = new Button(()->buttonboardB.getRawButton(10));
   public final Button b23 = new Button(()->buttonboardB.getRawButton(11));
   
