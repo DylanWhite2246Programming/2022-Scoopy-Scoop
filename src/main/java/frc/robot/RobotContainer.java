@@ -12,10 +12,12 @@ import frc.robot.commands.FacePose;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.ScoopyScoop;
+import frc.robot.subsystems.Vision;
 import frc.robot.team2246.Drivestation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -32,6 +34,7 @@ public class RobotContainer {
   private final Drivetrain drivetrain = new Drivetrain();
   private final Climber climber = new Climber();
   private final ScoopyScoop scoop = new ScoopyScoop();
+  private final Vision vision = new Vision();
 
   private final Drivestation controller = new Drivestation(Ports.kUSBPorts);
   //private final Joystick controller = new Joystick(0);
@@ -71,8 +74,20 @@ public class RobotContainer {
     controller.rs0
       .whileHeld(new RunCommand(()->drivetrain.setMaxOutput(.3), drivetrain), true)
       .whenReleased(new RunCommand(()->drivetrain.setMaxOutput(.75), drivetrain), true);
-    controller.rs1
-      .whileHeld(new FacePose(new Translation2d(0,0), controller::getLeftY, drivetrain), false);
+    //controller.rs1
+    //  .whileHeld(new FacePose(new Translation2d(0,0), controller::getLeftY, drivetrain), false);
+    controller.rs2
+      .whileHeld(new FacePose(new Translation2d(0, 0), controller::getLeftY, drivetrain), false);
+    controller.rs3
+      .whileHeld(new PIDCommand(
+        drivetrain.getTurnController(), 
+        vision.getResults().getBestTarget()::getYaw, 
+        0.0, 
+        output->{drivetrain.computerDrive(controller.getLeftY(),output);}, 
+        drivetrain), 
+        false
+      );
+
     //switch row 0
     controller.s00.whileHeld(new InstantCommand(()->scoop.shoot(0/3), scoop));
     //switch row 1
