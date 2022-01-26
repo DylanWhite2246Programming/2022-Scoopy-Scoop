@@ -87,6 +87,8 @@ public class RobotContainer {
         drivetrain)
           .alongWith(new InstantCommand(()->vision.setPipe(), vision)), 
         false
+      ).whenReleased(
+        new InstantCommand(()->vision.setDriverMode(true), vision)
       );
 
     //switch row 0
