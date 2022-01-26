@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.Constants.MotorControllerValues;
 import frc.robot.Constants.Ports;
 import frc.robot.commands.FacePose;
 import frc.robot.subsystems.Climber;
@@ -82,7 +83,7 @@ public class RobotContainer {
     controller.b02.whileHeld(new InstantCommand(()->climber.extendLifterSolenoid(), climber));
     //button row 1
     controller.b10.whileHeld(new InstantCommand(()->scoop.intake(), scoop));
-    controller.b11.whileHeld(new InstantCommand(()->scoop.shoot(0), scoop));
+    controller.b11.whileHeld(new InstantCommand(()->scoop.shoot(MotorControllerValues.kShooterVelocity), scoop));
     controller.b12.whileHeld(new InstantCommand(()->climber.retrackLifterSolenoid(), climber));
     //button row 2
     controller.b20.whileHeld(
@@ -104,10 +105,10 @@ public class RobotContainer {
     controller.b21.whileHeld(
       new ConditionalCommand(
         new SequentialCommandGroup(
-          new RunCommand(()->scoop.shoot(0), scoop),
+          new RunCommand(()->scoop.shoot(MotorControllerValues.kShooterVelocity), scoop),
           new RunCommand(()->scoop.rollerShoot(), scoop)), 
         new SequentialCommandGroup(
-          new RunCommand(()->scoop.shoot(0), scoop),
+          new RunCommand(()->scoop.shoot(MotorControllerValues.kShooterVelocity), scoop),
           new RunCommand(()->scoop.rollerSTOP(), scoop)), 
         scoop::shooterAtSetpoint), 
       false

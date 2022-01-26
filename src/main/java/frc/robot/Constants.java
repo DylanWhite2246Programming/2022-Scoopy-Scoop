@@ -176,5 +176,6 @@ public final class Constants {
         public static final double kIntakeValue = .3;
         public static final double kRollerValues = .25;
         public static final double kClimbSpeed = .75;
+        public static final double kShooterVelocity = 10;
     }
 }
