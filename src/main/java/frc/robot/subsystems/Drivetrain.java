@@ -141,6 +141,7 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
+    //TODO add network table stuff
     odometry.update(getRotation2d(), getLeftDistance(), getRightDistance());
   }
 
