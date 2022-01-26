@@ -42,6 +42,10 @@ public class RobotContainer {
   
   private final Drivestation controller = new Drivestation(Ports.kUSBPorts);
 
+  private final InstantCommand setAutoModeOn = new InstantCommand(()->power.setAutoMode(true), power);
+  private final InstantCommand setAutoModeOff = new InstantCommand(()->power.setAutoMode(false), power);
+
+  private final InstantCommand setPipeAutomatically = new InstantCommand(()->vision.setPipe(), vision);
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
@@ -78,7 +82,9 @@ public class RobotContainer {
       .whileHeld(new RunCommand(()->drivetrain.setMaxOutput(.3), drivetrain), true)
       .whenReleased(new RunCommand(()->drivetrain.setMaxOutput(.75), drivetrain), true);
     controller.rs2
-      .whileHeld(new FacePose(new Translation2d(0, 0), controller::getLeftY, drivetrain), false);
+      .whileHeld(new FacePose(new Translation2d(0, 0), controller::getLeftY, drivetrain)
+        .alongWith(setAutoModeOn), 
+      false);
     controller.rs3
       .whileHeld(new PIDCommand(
         drivetrain.getTurnController(), 
@@ -86,10 +92,11 @@ public class RobotContainer {
         0.0, 
         output->{drivetrain.computerDrive(controller.getLeftY(),output);}, 
         drivetrain)
-          .alongWith(new InstantCommand(()->vision.setPipe(), vision)), 
+          .alongWith(setPipeAutomatically,setAutoModeOn), 
         false
       ).whenReleased(
         new InstantCommand(()->vision.setDriverMode(true), vision)
+          .alongWith(setAutoModeOff)
       );
 
     //switch row 0
@@ -116,7 +123,9 @@ public class RobotContainer {
           new RunCommand(()->scoop.rollerIntake(), scoop), //run when first sensor is false
           scoop::getFirstSensor
         ),
-        new RunCommand(()->scoop.intake(), scoop) //run the hole time
+        //run the hole time
+        new RunCommand(()->scoop.intake(), scoop),
+        setAutoModeOn
       ), 
       false
     );
@@ -128,7 +137,8 @@ public class RobotContainer {
         new SequentialCommandGroup(
           new RunCommand(()->scoop.shoot(0), scoop),
           new RunCommand(()->scoop.rollerSTOP(), scoop)), 
-        scoop::shooterAtSetpoint), 
+        scoop::shooterAtSetpoint)
+          .alongWith(setAutoModeOn), 
       false
     );
   }
