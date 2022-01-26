@@ -102,6 +102,14 @@ public class RobotContainer {
 
     //switch row 0
     controller.s00.whileHeld(new InstantCommand(()->scoop.shoot(0/3), scoop));
+    controller.s01.whileHeld(
+      new InstantCommand(
+        ()->lift.aim(
+          drivetrain.getDistanceTo(
+            new Translation2d(0, 0))), 
+      lift
+      )
+    );
     //switch row 1
     //button row 0
     controller.b00.whileHeld(new InstantCommand(()->scoop.rollerIntake(), scoop));
