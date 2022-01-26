@@ -74,8 +74,6 @@ public class RobotContainer {
     controller.rs0
       .whileHeld(new RunCommand(()->drivetrain.setMaxOutput(.3), drivetrain), true)
       .whenReleased(new RunCommand(()->drivetrain.setMaxOutput(.75), drivetrain), true);
-    //controller.rs1
-    //  .whileHeld(new FacePose(new Translation2d(0,0), controller::getLeftY, drivetrain), false);
     controller.rs2
       .whileHeld(new FacePose(new Translation2d(0, 0), controller::getLeftY, drivetrain), false);
     controller.rs3
