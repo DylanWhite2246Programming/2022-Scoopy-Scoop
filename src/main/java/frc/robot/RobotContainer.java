@@ -84,7 +84,8 @@ public class RobotContainer {
         vision.getResults().getBestTarget()::getYaw, 
         0.0, 
         output->{drivetrain.computerDrive(controller.getLeftY(),output);}, 
-        drivetrain), 
+        drivetrain)
+          .alongWith(new InstantCommand(()->vision.setPipe(), vision)), 
         false
       );
 
