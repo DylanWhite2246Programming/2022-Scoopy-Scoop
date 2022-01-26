@@ -11,6 +11,8 @@ import frc.robot.Constants.Ports;
 import frc.robot.commands.FacePose;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Lifter;
+import frc.robot.subsystems.PowerAndPneumatics;
 import frc.robot.subsystems.ScoopyScoop;
 import frc.robot.subsystems.Vision;
 import frc.robot.team2246.Drivestation;
@@ -31,13 +33,14 @@ import edu.wpi.first.wpilibj2.command.button.Button;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final Drivetrain drivetrain = new Drivetrain();
   private final Climber climber = new Climber();
+  private final Drivetrain drivetrain = new Drivetrain();
+  private final Lifter lift = new Lifter();
+  private final PowerAndPneumatics power = new PowerAndPneumatics();
   private final ScoopyScoop scoop = new ScoopyScoop();
   private final Vision vision = new Vision();
-
+  
   private final Drivestation controller = new Drivestation(Ports.kUSBPorts);
-  //private final Joystick controller = new Joystick(0);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
