@@ -11,6 +11,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
@@ -115,6 +116,9 @@ public class Drivetrain extends SubsystemBase {
   }
   
   public Pose2d getPose(){return odometry.getPoseMeters();}
+  public double getDistanceTo(Translation2d place){
+    return place.getDistance(getPose().getTranslation());
+  }
   
   public void resetOdometery(Pose2d pose){
     resetEncoders();
@@ -137,6 +141,7 @@ public class Drivetrain extends SubsystemBase {
 
   @Override
   public void periodic() {
+    //TODO add network table stuff
     odometry.update(getRotation2d(), getLeftDistance(), getRightDistance());
   }
 

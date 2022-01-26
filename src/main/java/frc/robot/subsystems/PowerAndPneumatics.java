@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Ports;
@@ -13,9 +14,11 @@ import frc.robot.Constants.Ports;
 public class PowerAndPneumatics extends SubsystemBase {
   private PneumaticHub pneumaticHub = new PneumaticHub(Ports.kPnuematicsHubCANID);
   private PowerDistribution pdp = new PowerDistribution(Ports.kPDHCANID, ModuleType.kRev);
+  private boolean autoMode;
+  private Timer timer = new Timer();
   /** Creates a new Power. */
   public PowerAndPneumatics() {
-
+    timer.start();
   }
   public void stopCompressor(){
     pneumaticHub.disableCompressor();
@@ -43,10 +46,12 @@ public class PowerAndPneumatics extends SubsystemBase {
   public void setSwitchableChannel(boolean value){
     pdp.setSwitchableChannel(value);
   }
-  
+
+  public void setAutoMode(boolean value){autoMode=value;}
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    setSwitchableChannel(autoMode==false); //makes light solid when not in auto mode
+    setSwitchableChannel(Math.floor(timer.get())%2==0&&autoMode); //blinks the lights
   }
 }

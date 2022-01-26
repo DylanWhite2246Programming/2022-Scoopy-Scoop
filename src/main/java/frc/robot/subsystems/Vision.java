@@ -5,7 +5,10 @@
 package frc.robot.subsystems;
 
 import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonPipelineResult;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Vision extends SubsystemBase {
@@ -14,10 +17,25 @@ public class Vision extends SubsystemBase {
   public Vision() {}
   
   /***
-   * @param index 0 blue, 1 red
+   * @param index 0 drive mode, 1 blue, 2 red
    */
-  public void setPipe(int index){
-    cam.setPipelineIndex(index);
+  public void setPipe(){
+    if(DriverStation.getAlliance()==Alliance.Blue){
+      cam.setPipelineIndex(1);
+    }else if(DriverStation.getAlliance()==Alliance.Red){
+      cam.setPipelineIndex(2);
+    }else{
+      cam.setDriverMode(true);
+    }
+  }
+  public void setPipeManual(int value){
+    cam.setPipelineIndex(value);
+  }
+  public void setDriverMode(boolean value){
+    cam.setDriverMode(value);
+  }
+  public PhotonPipelineResult getResults(){
+    return cam.getLatestResult();
   }
 
   @Override

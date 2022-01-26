@@ -12,11 +12,15 @@ import frc.robot.Constants.Ports;
 import frc.robot.commands.FacePose;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Lifter;
+import frc.robot.subsystems.PowerAndPneumatics;
 import frc.robot.subsystems.ScoopyScoop;
+import frc.robot.subsystems.Vision;
 import frc.robot.team2246.Drivestation;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -30,13 +34,19 @@ import edu.wpi.first.wpilibj2.command.button.Button;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final Drivetrain drivetrain = new Drivetrain();
   private final Climber climber = new Climber();
+  private final Drivetrain drivetrain = new Drivetrain();
+  private final Lifter lift = new Lifter();
+  private final PowerAndPneumatics power = new PowerAndPneumatics();
   private final ScoopyScoop scoop = new ScoopyScoop();
-
+  private final Vision vision = new Vision();
+  
   private final Drivestation controller = new Drivestation(Ports.kUSBPorts);
-  //private final Joystick controller = new Joystick(0);
 
+  private final InstantCommand setAutoModeOn = new InstantCommand(()->power.setAutoMode(true), power);
+  private final InstantCommand setAutoModeOff = new InstantCommand(()->power.setAutoMode(false), power);
+
+  private final InstantCommand setPipeAutomatically = new InstantCommand(()->vision.setPipe(), vision);
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
@@ -72,8 +82,24 @@ public class RobotContainer {
     controller.rs0
       .whileHeld(new RunCommand(()->drivetrain.setMaxOutput(.3), drivetrain), true)
       .whenReleased(new RunCommand(()->drivetrain.setMaxOutput(.75), drivetrain), true);
-    controller.rs1
-      .whileHeld(new FacePose(new Translation2d(0,0), controller::getLeftY, drivetrain), false);
+    controller.rs2
+      .whileHeld(new FacePose(new Translation2d(0, 0), controller::getLeftY, drivetrain)
+        .alongWith(setAutoModeOn), 
+      false);
+    controller.rs3
+      .whileHeld(new PIDCommand(
+        drivetrain.getTurnController(), 
+        vision.getResults().getBestTarget()::getYaw, 
+        0.0, 
+        output->{drivetrain.computerDrive(controller.getLeftY(),output);}, 
+        drivetrain)
+          .alongWith(setPipeAutomatically,setAutoModeOn), 
+        false
+      ).whenReleased(
+        new InstantCommand(()->vision.setDriverMode(true), vision)
+          .alongWith(setAutoModeOff)
+      );
+
     //switch row 0
     controller.s00.whileHeld(new InstantCommand(()->scoop.shoot(0/3), scoop));
     //switch row 1
@@ -98,7 +124,9 @@ public class RobotContainer {
           new RunCommand(()->scoop.rollerIntake(), scoop), //run when first sensor is false
           scoop::getFirstSensor
         ),
-        new RunCommand(()->scoop.intake(), scoop) //run the hole time
+        //run the hole time
+        new RunCommand(()->scoop.intake(), scoop),
+        setAutoModeOn
       ), 
       false
     );
@@ -110,7 +138,8 @@ public class RobotContainer {
         new SequentialCommandGroup(
           new RunCommand(()->scoop.shoot(MotorControllerValues.kShooterVelocity), scoop),
           new RunCommand(()->scoop.rollerSTOP(), scoop)), 
-        scoop::shooterAtSetpoint), 
+        scoop::shooterAtSetpoint)
+          .alongWith(setAutoModeOn), 
       false
     );
   }
