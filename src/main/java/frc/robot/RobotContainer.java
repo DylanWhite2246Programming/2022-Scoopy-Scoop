@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.MotorControllerValues;
 import frc.robot.Constants.Ports;
+import frc.robot.commands.Climb;
 import frc.robot.commands.FacePose;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
@@ -19,7 +20,6 @@ import frc.robot.subsystems.Vision;
 import frc.robot.team2246.Drivestation;
 import frc.robot.team2246.NetworktableHandeler;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -44,11 +44,6 @@ public class RobotContainer {
   private final Drivestation controller = new Drivestation(Ports.kUSBPorts);
   private final NetworktableHandeler tableButtons = new NetworktableHandeler();
 
-  private final InstantCommand setAutoModeOn = new InstantCommand(()->power.setAutoMode(true), power);
-  private final InstantCommand setAutoModeOff = new InstantCommand(()->power.setAutoMode(false), power);
-
-  private final InstantCommand turnOnVision = new InstantCommand(()->vision.setDriverMode(false), vision);
-  private final InstantCommand turnOffVision = new InstantCommand(()->vision.setDriverMode(true), vision);
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
@@ -75,25 +70,15 @@ public class RobotContainer {
     .whenPressed(new RunCommand(()->drivetrain.setMaxOutput(1), drivetrain))
     .whenReleased(new RunCommand(()->drivetrain.setMaxOutput(.75), drivetrain));
     controller.ls1.whileActiveOnce(
-      new ParallelCommandGroup(turnOnVision,setAutoModeOn)
-      .andThen(new RunCommand(()->scoop.autoIntake(), scoop))
-    ).whenInactive(new ParallelCommandGroup(turnOffVision, setAutoModeOff));
-    /*controller.ls1.whileHeld(
       new ParallelCommandGroup(
-        new ConditionalCommand(
-          new ConditionalCommand( //run when first sensor is true
-          new RunCommand(()->scoop.rollerIntake(), scoop), //run when a ball comes in
-            //.withInterrupt(scoop::getSecondSensor),
-          new RunCommand(()->scoop.rollerSTOP(), scoop), //run while there are no balls coming in
-          scoop::getEntrySensor
-          ), 
-          new RunCommand(()->scoop.rollerIntake(), scoop), //run when first sensor is false
-          scoop::getFirstSensor
-        ),
-        setAutoModeOn
-      ),//.alongWith(new RunCommand(()->scoop.intake(), scoop)), 
-      false
-    );*/
+        new InstantCommand(()->power.setAutoMode(true), power),
+        new InstantCommand(()->vision.setDriverMode(false), vision)
+      )
+      .andThen(new RunCommand(()->scoop.autoIntake(), scoop))
+    ).whenInactive(new ParallelCommandGroup(
+      new InstantCommand(()->power.setAutoMode(false), power),
+      new InstantCommand(()->vision.setDriverMode(true), vision)
+    ));
     //POV
     new Button(()->controller.leftPovEquals(0))
       .whenPressed(new InstantCommand(()->climber.extendBackSolenoid()));
@@ -105,25 +90,32 @@ public class RobotContainer {
       .whenReleased(new RunCommand(()->drivetrain.setMaxOutput(.75), drivetrain), true);
     controller.rs2.whileActiveOnce(
       new FacePose(new Translation2d(0, 0), controller::getLeftY, drivetrain)
-        .alongWith(setAutoModeOn)
+        .alongWith(new InstantCommand(()->power.setAutoMode(true), power))
     );
     controller.rs3
       .whileHeld(new PIDCommand(
         drivetrain.getTurnController(), 
-        vision.getResults().getBestTarget()::getYaw, 
+        ()->{
+          if(vision.getResults().hasTargets()){return vision.getResults().getBestTarget().getYaw();}
+          else{return controller.getRightX();}
+        }, 
         0.0, 
         output->{drivetrain.computerDrive(controller.getLeftY(),output);}, 
         drivetrain)
-          .alongWith(turnOnVision,setAutoModeOn), 
+          .alongWith(new ParallelCommandGroup(
+            new InstantCommand(()->power.setAutoMode(true), power),
+            new InstantCommand(()->vision.setDriverMode(false), vision)
+          )), 
         false
       ).whenReleased(
-        new InstantCommand(()->vision.setDriverMode(true), vision)
-          .alongWith(setAutoModeOff)
+        new ParallelCommandGroup(
+            new InstantCommand(()->power.setAutoMode(false), power),
+            new InstantCommand(()->vision.setDriverMode(true), vision)
+          )
       );
 
     //switch row 0
-    controller.s00.whileActiveOnce(new RunCommand(()->scoop.shoot(MotorControllerValues.kShooterVelocity/3), scoop));//prime shooter
-    controller.s01.whileHeld(
+    controller.s00.whileHeld(
       new InstantCommand(
         ()->lift.aim(
           drivetrain.getDistanceTo(
@@ -142,23 +134,23 @@ public class RobotContainer {
     controller.b12.whileActiveOnce(new InstantCommand(()->climber.retrackLifterSolenoid(), climber));
     //button row 2
     controller.b21.whileActiveOnce(
-      new ParallelCommandGroup(turnOnVision,setAutoModeOn)
+      new ParallelCommandGroup(
+        new InstantCommand(()->power.setAutoMode(true), power),
+        new InstantCommand(()->vision.setDriverMode(false), vision)
+      )
       .andThen(new RunCommand(()->scoop.autoIntake(), scoop))
-    ).whenInactive(new ParallelCommandGroup(turnOffVision, setAutoModeOff));
-    controller.b21.whileHeld(
-      new ConditionalCommand(
-          new RunCommand(()->{
-            scoop.shoot(MotorControllerValues.kShooterVelocity);
-            scoop.rollerShoot();
-          }, scoop),
-          new RunCommand(()->{
-            scoop.shoot(MotorControllerValues.kShooterVelocity);
-            scoop.rollerSTOP();
-          }, scoop),
-        scoop::shooterAtSetpoint)
-          .alongWith(setAutoModeOn), 
-      false
-    );
+    ).whenInactive(new ParallelCommandGroup(
+      new InstantCommand(()->power.setAutoMode(false), power),
+      new InstantCommand(()->vision.setDriverMode(true), vision)
+    ));
+    controller.b21
+      .whileActiveOnce(
+        new InstantCommand(()->scoop.shoot(MotorControllerValues.kShooterVelocity), scoop)
+        .alongWith(new InstantCommand(()->power.setAutoMode(true), power))
+        .andThen(new RunCommand(()->scoop.autoFeedShooter(), scoop))
+      )
+      .whenInactive(new InstantCommand(()->power.setAutoMode(false), power));
+    controller.b22.whenPressed(new Climb(climber, lift, drivetrain), true);
   }
 
   /**

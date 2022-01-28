@@ -119,6 +119,13 @@ public class ScoopyScoop extends SubsystemBase {
       rollerIntake();//intake rollers when all sensors are false
     }
   }
+  public void autoFeedShooter(){
+    if(shooterAtSetpoint()){
+      rollerShoot();
+    }else{
+      rollerSTOP();
+    }
+  }
 
   public boolean getEntrySensor(){return entrySensor.get();}
   public boolean getFirstSensor(){return firstBallSensor.get();}
