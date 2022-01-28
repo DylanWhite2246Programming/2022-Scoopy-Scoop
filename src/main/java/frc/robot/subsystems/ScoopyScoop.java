@@ -93,7 +93,7 @@ public class ScoopyScoop extends SubsystemBase {
     return leftPid.atSetpoint()&&
       rightPid.atSetpoint();
   }
-  public void intake(){
+  public void intakeShooter(){
     leftShooter.set(-MotorControllerValues.kIntakeValue);
     rightShooter.set(-MotorControllerValues.kIntakeValue);
   }
@@ -106,6 +106,20 @@ public class ScoopyScoop extends SubsystemBase {
   public void rollerSTOP(){
     rollers.stopMotor();
   }
+
+  public void autoIntake(){
+    intakeShooter();
+    if(getFirstSensor()){
+      if(getEntrySensor()&&getSecondSensor()==false){
+        rollerIntake();
+      }else{
+        rollerSTOP();
+      }
+    }else{
+      rollerIntake();//intake rollers when all sensors are false
+    }
+  }
+
   public boolean getEntrySensor(){return entrySensor.get();}
   public boolean getFirstSensor(){return firstBallSensor.get();}
   public boolean getSecondSensor(){return secondBallSensor.get();}

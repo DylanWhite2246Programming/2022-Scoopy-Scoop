@@ -48,6 +48,7 @@ public class RobotContainer {
   private final InstantCommand setAutoModeOff = new InstantCommand(()->power.setAutoMode(false), power);
 
   private final InstantCommand turnOnVision = new InstantCommand(()->vision.setDriverMode(false), vision);
+  private final InstantCommand turnOffVision = new InstantCommand(()->vision.setDriverMode(true), vision);
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
@@ -71,26 +72,28 @@ public class RobotContainer {
     //Network buttons
     //left stick
     controller.ls0
-    .whileHeld(new RunCommand(()->drivetrain.setMaxOutput(1), drivetrain), true)
-    .whenPressed(new RunCommand(()->drivetrain.setMaxOutput(.75), drivetrain), true);
-    controller.ls1.whileHeld(
+    .whenPressed(new RunCommand(()->drivetrain.setMaxOutput(1), drivetrain))
+    .whenReleased(new RunCommand(()->drivetrain.setMaxOutput(.75), drivetrain));
+    controller.ls1.whileActiveOnce(
+      new ParallelCommandGroup(turnOnVision,setAutoModeOn)
+      .andThen(new RunCommand(()->scoop.autoIntake(), scoop))
+    ).whenInactive(new ParallelCommandGroup(turnOffVision, setAutoModeOff));
+    /*controller.ls1.whileHeld(
       new ParallelCommandGroup(
         new ConditionalCommand(
           new ConditionalCommand( //run when first sensor is true
-          new RunCommand(()->scoop.rollerIntake(), scoop) //run when a ball comes in
-          .withInterrupt(scoop::getSecondSensor),
+          new RunCommand(()->scoop.rollerIntake(), scoop), //run when a ball comes in
+            //.withInterrupt(scoop::getSecondSensor),
           new RunCommand(()->scoop.rollerSTOP(), scoop), //run while there are no balls coming in
           scoop::getEntrySensor
           ), 
           new RunCommand(()->scoop.rollerIntake(), scoop), //run when first sensor is false
           scoop::getFirstSensor
-          ),
-          //run the hole time
-          new RunCommand(()->scoop.intake(), scoop),
-          setAutoModeOn
-          ), 
-          false
-          );
+        ),
+        setAutoModeOn
+      ),//.alongWith(new RunCommand(()->scoop.intake(), scoop)), 
+      false
+    );*/
     //POV
     new Button(()->controller.leftPovEquals(0))
       .whenPressed(new InstantCommand(()->climber.extendBackSolenoid()));
@@ -98,12 +101,12 @@ public class RobotContainer {
       .whenPressed(new InstantCommand(()->climber.retrackBackSolenoid()));
     //rightstick
     controller.rs0
-      .whileHeld(new RunCommand(()->drivetrain.setMaxOutput(.3), drivetrain), true)
+      .whenPressed(new RunCommand(()->drivetrain.setMaxOutput(.3), drivetrain), true)
       .whenReleased(new RunCommand(()->drivetrain.setMaxOutput(.75), drivetrain), true);
-    controller.rs2
-      .whileHeld(new FacePose(new Translation2d(0, 0), controller::getLeftY, drivetrain)
-        .alongWith(setAutoModeOn), 
-      false);
+    controller.rs2.whileActiveOnce(
+      new FacePose(new Translation2d(0, 0), controller::getLeftY, drivetrain)
+        .alongWith(setAutoModeOn)
+    );
     controller.rs3
       .whileHeld(new PIDCommand(
         drivetrain.getTurnController(), 
@@ -119,7 +122,7 @@ public class RobotContainer {
       );
 
     //switch row 0
-    controller.s00.whileHeld(new InstantCommand(()->scoop.shoot(MotorControllerValues.kShooterVelocity/3), scoop));//prime shooter
+    controller.s00.whileActiveOnce(new RunCommand(()->scoop.shoot(MotorControllerValues.kShooterVelocity/3), scoop));//prime shooter
     controller.s01.whileHeld(
       new InstantCommand(
         ()->lift.aim(
@@ -130,32 +133,18 @@ public class RobotContainer {
     );
     //switch row 1
     //button row 0
-    controller.b00.whileHeld(new InstantCommand(()->scoop.rollerIntake(), scoop));
-    controller.b01.whileHeld(new InstantCommand(()->scoop.rollerShoot(), scoop));
-    controller.b02.whileHeld(new InstantCommand(()->climber.extendLifterSolenoid(), climber));
+    controller.b00.whileActiveOnce(new InstantCommand(()->scoop.rollerIntake(), scoop));
+    controller.b01.whileActiveOnce(new InstantCommand(()->scoop.rollerShoot(), scoop));
+    controller.b02.whileActiveOnce(new InstantCommand(()->climber.extendLifterSolenoid(), climber));
     //button row 1
-    controller.b10.whileHeld(new InstantCommand(()->scoop.intake(), scoop));
-    controller.b11.whileHeld(new InstantCommand(()->scoop.shoot(MotorControllerValues.kShooterVelocity), scoop));
-    controller.b12.whileHeld(new InstantCommand(()->climber.retrackLifterSolenoid(), climber));
+    controller.b10.whileActiveOnce(new InstantCommand(()->scoop.intakeShooter(), scoop));
+    controller.b11.whileActiveOnce(new InstantCommand(()->scoop.shoot(MotorControllerValues.kShooterVelocity), scoop));
+    controller.b12.whileActiveOnce(new InstantCommand(()->climber.retrackLifterSolenoid(), climber));
     //button row 2
-    controller.b20.whileHeld(
-      new ParallelCommandGroup(
-        new ConditionalCommand(
-          new ConditionalCommand( //run when first sensor is true
-            new RunCommand(()->scoop.rollerIntake(), scoop) //run when a ball comes in
-              .withInterrupt(scoop::getSecondSensor),
-            new RunCommand(()->scoop.rollerSTOP(), scoop), //run while there are no balls coming in
-            scoop::getEntrySensor
-          ), 
-          new RunCommand(()->scoop.rollerIntake(), scoop), //run when first sensor is false
-          scoop::getFirstSensor
-        ),
-        //run the hole time
-        new RunCommand(()->scoop.intake(), scoop),
-        setAutoModeOn
-      ), 
-      false
-    );
+    controller.b21.whileActiveOnce(
+      new ParallelCommandGroup(turnOnVision,setAutoModeOn)
+      .andThen(new RunCommand(()->scoop.autoIntake(), scoop))
+    ).whenInactive(new ParallelCommandGroup(turnOffVision, setAutoModeOff));
     controller.b21.whileHeld(
       new ConditionalCommand(
           new RunCommand(()->{
