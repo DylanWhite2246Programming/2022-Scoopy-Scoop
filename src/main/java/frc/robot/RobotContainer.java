@@ -24,7 +24,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.Button;
 
 /**
@@ -57,10 +56,7 @@ public class RobotContainer {
       new RunCommand(()->drivetrain.drive(controller.getLeftY(),controller.getRightX()), drivetrain)
     );
     scoop.setDefaultCommand(
-      new ParallelCommandGroup(
-        new RunCommand(()->scoop.shooterSTOP(), scoop),
-        new RunCommand(()->scoop.rollerSTOP(), scoop)
-      )
+        new RunCommand(()->{scoop.shooterSTOP();scoop.rollerSTOP();}, scoop)
     );
     new RunCommand(()->vision.setOveride(tableButtons.getOverideAutoPipe(), tableButtons.getManualPipe()), vision);
   }
@@ -162,12 +158,14 @@ public class RobotContainer {
     );
     controller.b21.whileHeld(
       new ConditionalCommand(
-        new SequentialCommandGroup(
-          new RunCommand(()->scoop.shoot(MotorControllerValues.kShooterVelocity), scoop),
-          new RunCommand(()->scoop.rollerShoot(), scoop)), 
-        new SequentialCommandGroup(
-          new RunCommand(()->scoop.shoot(MotorControllerValues.kShooterVelocity), scoop),
-          new RunCommand(()->scoop.rollerSTOP(), scoop)), 
+          new RunCommand(()->{
+            scoop.shoot(MotorControllerValues.kShooterVelocity);
+            scoop.rollerShoot();
+          }, scoop),
+          new RunCommand(()->{
+            scoop.shoot(MotorControllerValues.kShooterVelocity);
+            scoop.rollerSTOP();
+          }, scoop),
         scoop::shooterAtSetpoint)
           .alongWith(setAutoModeOn), 
       false
