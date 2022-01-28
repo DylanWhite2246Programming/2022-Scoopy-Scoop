@@ -51,7 +51,11 @@ public class PowerAndPneumatics extends SubsystemBase {
 
   @Override
   public void periodic() {
-    setSwitchableChannel(autoMode==false); //makes light solid when not in auto mode
-    setSwitchableChannel(Math.floor(timer.get())%2==0&&autoMode); //blinks the lights
+    if(autoMode==false){
+      setSwitchableChannel(true);
+    }
+    else{
+      setSwitchableChannel(Math.floor(timer.get())%2==0); //blinks the lights
+    }
   }
 }
