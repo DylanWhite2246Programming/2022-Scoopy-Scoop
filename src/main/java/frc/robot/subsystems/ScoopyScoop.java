@@ -108,7 +108,7 @@ public class ScoopyScoop extends SubsystemBase {
   }
 
   public void autoIntake(){
-    intakeShooter();
+    intakeShooter();//intake shooter the hole time
     if(getFirstSensor()){
       if(getEntrySensor()&&getSecondSensor()==false){
         rollerIntake();
