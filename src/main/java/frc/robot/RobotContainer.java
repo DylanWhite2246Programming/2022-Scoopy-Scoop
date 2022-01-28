@@ -78,6 +78,24 @@ public class RobotContainer {
     controller.ls0
       .whileHeld(new RunCommand(()->drivetrain.setMaxOutput(1), drivetrain), true)
       .whenPressed(new RunCommand(()->drivetrain.setMaxOutput(.75), drivetrain), true);
+    controller.ls1.whileHeld(
+    new ParallelCommandGroup(
+      new ConditionalCommand(
+        new ConditionalCommand( //run when first sensor is true
+          new RunCommand(()->scoop.rollerIntake(), scoop) //run when a ball comes in
+            .withInterrupt(scoop::getSecondSensor),
+          new RunCommand(()->scoop.rollerSTOP(), scoop), //run while there are no balls coming in
+          scoop::getEntrySensor
+        ), 
+        new RunCommand(()->scoop.rollerIntake(), scoop), //run when first sensor is false
+        scoop::getFirstSensor
+      ),
+      //run the hole time
+      new RunCommand(()->scoop.intake(), scoop),
+      setAutoModeOn
+    ), 
+    false
+    );
     //rightstick
     controller.rs0
       .whileHeld(new RunCommand(()->drivetrain.setMaxOutput(.3), drivetrain), true)
@@ -101,13 +119,13 @@ public class RobotContainer {
       );
 
     //switch row 0
-    controller.s00.whileHeld(new InstantCommand(()->scoop.shoot(0/3), scoop));
+    controller.s00.whileHeld(new InstantCommand(()->scoop.shoot(MotorControllerValues.kShooterVelocity/3), scoop));//prime shooter
     controller.s01.whileHeld(
       new InstantCommand(
         ()->lift.aim(
           drivetrain.getDistanceTo(
             new Translation2d(0, 0))), 
-      lift
+        lift
       )
     );
     //switch row 1
