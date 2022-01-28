@@ -35,7 +35,7 @@ public final class Constants {
     public static final class Ports{
         //CANID
         public static final int kPDHCANID = 9;
-        public static final int kPnuematicsHubCANID = 0;
+        public static final int kPnuematicsHubCANID = 10;
         public static final int kLeft1CANID = 1;
         public static final int kLeft2CANID = 2;
         public static final int kRight1CANID = 3;
