@@ -13,23 +13,32 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Vision extends SubsystemBase {
   private static PhotonCamera cam = new PhotonCamera("cameraName");
+  private boolean overide = false; private int pipe;
   /** Creates a new Vision. */
-  public Vision() {}
+  public Vision() {
+    setPipe();
+  }
+
+  public void setOveride(boolean overide, int pipe){
+    this.overide=overide;
+    this.pipe=pipe;
+  }
   
   /***
    * @param index 0 drive mode, 1 blue, 2 red
    */
   public void setPipe(){
-    if(DriverStation.getAlliance()==Alliance.Blue){
-      cam.setPipelineIndex(1);
-    }else if(DriverStation.getAlliance()==Alliance.Red){
-      cam.setPipelineIndex(2);
+    if(overide){
+      cam.setPipelineIndex(pipe);
     }else{
-      cam.setDriverMode(true);
+      if(DriverStation.getAlliance()==Alliance.Blue){
+        cam.setPipelineIndex(1);
+      }else if(DriverStation.getAlliance()==Alliance.Red){
+        cam.setPipelineIndex(2);
+      }else{
+        cam.setDriverMode(true);
+      }
     }
-  }
-  public void setPipeManual(int value){
-    cam.setPipelineIndex(value);
   }
   public void setDriverMode(boolean value){
     cam.setDriverMode(value);

@@ -17,6 +17,7 @@ import frc.robot.subsystems.PowerAndPneumatics;
 import frc.robot.subsystems.ScoopyScoop;
 import frc.robot.subsystems.Vision;
 import frc.robot.team2246.Drivestation;
+import frc.robot.team2246.NetworktableHandeler;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -42,11 +43,12 @@ public class RobotContainer {
   private final Vision vision = new Vision();
   
   private final Drivestation controller = new Drivestation(Ports.kUSBPorts);
+  private final NetworktableHandeler tableButtons = new NetworktableHandeler();
 
   private final InstantCommand setAutoModeOn = new InstantCommand(()->power.setAutoMode(true), power);
   private final InstantCommand setAutoModeOff = new InstantCommand(()->power.setAutoMode(false), power);
 
-  private final InstantCommand setPipeAutomatically = new InstantCommand(()->vision.setPipe(), vision);
+  private final InstantCommand turnOnVision = new InstantCommand(()->vision.setDriverMode(false), vision);
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
@@ -60,6 +62,7 @@ public class RobotContainer {
         new RunCommand(()->scoop.rollerSTOP(), scoop)
       )
     );
+    new RunCommand(()->vision.setOveride(tableButtons.getOverideAutoPipe(), tableButtons.getManualPipe()), vision);
   }
 
   /**
@@ -69,33 +72,34 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    //Network buttons
+    //left stick
+    controller.ls0
+    .whileHeld(new RunCommand(()->drivetrain.setMaxOutput(1), drivetrain), true)
+    .whenPressed(new RunCommand(()->drivetrain.setMaxOutput(.75), drivetrain), true);
+    controller.ls1.whileHeld(
+      new ParallelCommandGroup(
+        new ConditionalCommand(
+          new ConditionalCommand( //run when first sensor is true
+          new RunCommand(()->scoop.rollerIntake(), scoop) //run when a ball comes in
+          .withInterrupt(scoop::getSecondSensor),
+          new RunCommand(()->scoop.rollerSTOP(), scoop), //run while there are no balls coming in
+          scoop::getEntrySensor
+          ), 
+          new RunCommand(()->scoop.rollerIntake(), scoop), //run when first sensor is false
+          scoop::getFirstSensor
+          ),
+          //run the hole time
+          new RunCommand(()->scoop.intake(), scoop),
+          setAutoModeOn
+          ), 
+          false
+          );
     //POV
     new Button(()->controller.leftPovEquals(0))
       .whenPressed(new InstantCommand(()->climber.extendBackSolenoid()));
     new Button(()->controller.leftPovEquals(180))
       .whenPressed(new InstantCommand(()->climber.retrackBackSolenoid()));
-    //left stick
-    controller.ls0
-      .whileHeld(new RunCommand(()->drivetrain.setMaxOutput(1), drivetrain), true)
-      .whenPressed(new RunCommand(()->drivetrain.setMaxOutput(.75), drivetrain), true);
-    controller.ls1.whileHeld(
-    new ParallelCommandGroup(
-      new ConditionalCommand(
-        new ConditionalCommand( //run when first sensor is true
-          new RunCommand(()->scoop.rollerIntake(), scoop) //run when a ball comes in
-            .withInterrupt(scoop::getSecondSensor),
-          new RunCommand(()->scoop.rollerSTOP(), scoop), //run while there are no balls coming in
-          scoop::getEntrySensor
-        ), 
-        new RunCommand(()->scoop.rollerIntake(), scoop), //run when first sensor is false
-        scoop::getFirstSensor
-      ),
-      //run the hole time
-      new RunCommand(()->scoop.intake(), scoop),
-      setAutoModeOn
-    ), 
-    false
-    );
     //rightstick
     controller.rs0
       .whileHeld(new RunCommand(()->drivetrain.setMaxOutput(.3), drivetrain), true)
@@ -111,7 +115,7 @@ public class RobotContainer {
         0.0, 
         output->{drivetrain.computerDrive(controller.getLeftY(),output);}, 
         drivetrain)
-          .alongWith(setPipeAutomatically,setAutoModeOn), 
+          .alongWith(turnOnVision,setAutoModeOn), 
         false
       ).whenReleased(
         new InstantCommand(()->vision.setDriverMode(true), vision)
