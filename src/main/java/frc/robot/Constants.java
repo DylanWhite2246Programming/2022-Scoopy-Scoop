@@ -45,8 +45,8 @@ public final class Constants {
         public static final int kLeftShooterCANID = 7;
         public static final int kRightShooterCANID = 8;
         //PCM ports
-        public static final int[] climber1Ports = new int[]{0,1};
-        public static final int[] climber2Ports = new int[]{2,3};
+        public static final int[] climber1Ports = new int[]{1,2};
+        public static final int[] climber2Ports = new int[]{3,4};
         //DIO might be unnessisary
         public static final int[] kLeftShooterEncoderPorts = new int[]{0,1};
         public static final int[] kRightShooterEncoderPorts = new int[]{2,3};
