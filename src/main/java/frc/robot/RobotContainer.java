@@ -20,6 +20,7 @@ import frc.robot.subsystems.Vision;
 import frc.robot.team2246.Drivestation;
 import frc.robot.team2246.NetworktableHandeler;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -124,14 +125,26 @@ public class RobotContainer {
       )
     );
     //switch row 1
+    controller.s13.whileActiveContinuous(new InstantCommand(()->power.compressorOn(), power))
+      .whenInactive(new RunCommand(()->power.compressorOff(), power), true);
     //button row 0
     controller.b00.whileActiveOnce(new InstantCommand(()->scoop.rollerIntake(), scoop));
     controller.b01.whileActiveOnce(new InstantCommand(()->scoop.rollerShoot(), scoop));
-    controller.b02.whileActiveOnce(new InstantCommand(()->climber.extendLifterSolenoid(), climber));
+      //add intake reverse
+    controller.b03.whenPressed(new ConditionalCommand(
+      new InstantCommand(()->climber.retrackLifterSolenoid()), 
+      null, 
+      controller.s03::get)
+    );
     //button row 1
     controller.b10.whileActiveOnce(new InstantCommand(()->scoop.shooterIntake(), scoop));
     controller.b11.whileActiveOnce(new InstantCommand(()->scoop.shoot(MotorControllerValues.kShooterVelocity), scoop));
-    controller.b12.whileActiveOnce(new InstantCommand(()->climber.retrackLifterSolenoid(), climber));
+      //add intake
+    controller.b13.whenPressed(new ConditionalCommand(
+      new InstantCommand(()->climber.retrackLifterSolenoid()), 
+      null, 
+      controller.s03::get)
+    );
     //button row 2
     controller.b21.whileActiveOnce(
       new ParallelCommandGroup(

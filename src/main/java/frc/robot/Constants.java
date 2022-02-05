@@ -6,8 +6,6 @@ package frc.robot;
 
 import java.util.List;
 
-import com.revrobotics.SparkMaxPIDController;
-
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
