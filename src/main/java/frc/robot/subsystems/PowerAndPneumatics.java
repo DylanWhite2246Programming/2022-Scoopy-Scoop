@@ -20,11 +20,11 @@ public class PowerAndPneumatics extends SubsystemBase {
   public PowerAndPneumatics() {
     timer.start();
   }
-  public void stopCompressor(){
-    pneumaticHub.disableCompressor();
+  public void compressorOn(){
+    pneumaticHub.enableCompressorAnalog(70,110);
   }
-  public void startCompressor(){
-    pneumaticHub.enableCompressorAnalog(80, 115);
+  public void compressorOff(){
+    pneumaticHub.disableCompressor();
   }
   public double getPressure(){
     return pneumaticHub.makeCompressor().getPressure();
