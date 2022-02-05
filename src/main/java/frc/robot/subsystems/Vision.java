@@ -13,7 +13,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Vision extends SubsystemBase {
   private static PhotonCamera cam = new PhotonCamera("cameraName");
-  private boolean overide = false; private int pipe;
+  private boolean overide = false; 
+  private int pipe;
   /** Creates a new Vision. */
   public Vision() {
     setPipe();
