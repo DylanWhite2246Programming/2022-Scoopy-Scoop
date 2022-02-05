@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -44,6 +46,8 @@ public class RobotContainer {
   
   private final Drivestation controller = new Drivestation(Ports.kUSBPorts);
   private final NetworktableHandeler tableButtons = new NetworktableHandeler();
+
+  private BooleanSupplier climbSafetySwitch = controller.s03::get;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -130,23 +134,23 @@ public class RobotContainer {
     //button row 0
     controller.b00.whileActiveOnce(new InstantCommand(()->scoop.rollerIntake(), scoop));
     controller.b01.whileActiveOnce(new InstantCommand(()->scoop.rollerShoot(), scoop));
-      //add intake reverse
+    controller.b02.whileActiveContinuous(()->scoop.intakeReverse(), scoop);
     controller.b03.whenPressed(new ConditionalCommand(
       new InstantCommand(()->climber.retrackLifterSolenoid()), 
       null, 
-      controller.s03::get)
+      climbSafetySwitch)
     );
     //button row 1
-    controller.b10.whileActiveOnce(new InstantCommand(()->scoop.shooterIntake(), scoop));
+    controller.b10.whileActiveContinuous(()->scoop.shooterIntake(), scoop);
     controller.b11.whileActiveOnce(new InstantCommand(()->scoop.shoot(MotorControllerValues.kShooterVelocity), scoop));
-      //add intake
+    controller.b12.whileActiveContinuous(()->scoop.intakeIntake(), scoop);
     controller.b13.whenPressed(new ConditionalCommand(
       new InstantCommand(()->climber.retrackLifterSolenoid()), 
       null, 
-      controller.s03::get)
+      climbSafetySwitch)
     );
     //button row 2
-    controller.b21.whileActiveOnce(
+    controller.b20.whileActiveOnce(
       new ParallelCommandGroup(
         new InstantCommand(()->power.setAutoMode(true), power),
         new InstantCommand(()->vision.setDriverMode(false), vision)
@@ -163,7 +167,11 @@ public class RobotContainer {
         .andThen(new RunCommand(()->scoop.autoFeedShooter(), scoop))
       )
       .whenInactive(new InstantCommand(()->power.setAutoMode(false), power));
-    controller.b22.whenPressed(new Climb(climber, lift, drivetrain), true);
+    controller.b22.whenPressed(
+      new ConditionalCommand(new Climb(climber, lift, drivetrain), null, climbSafetySwitch)
+      
+    );
+
   }
 
   /**
