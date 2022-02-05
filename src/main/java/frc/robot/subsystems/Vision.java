@@ -36,7 +36,7 @@ public class Vision extends SubsystemBase {
       }else if(DriverStation.getAlliance()==Alliance.Red){
         cam.setPipelineIndex(2);
       }else{
-        cam.setDriverMode(true);
+        cam.setPipelineIndex(1);
       }
     }
   }
