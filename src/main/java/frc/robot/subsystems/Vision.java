@@ -16,11 +16,14 @@ public class Vision extends SubsystemBase {
   private boolean overide = false; 
   private int pipe;
   /** Creates a new Vision. */
-  public Vision() {}
+  public Vision() {
+    setPipe();
+  }
 
   public void setOveride(boolean overide, int pipe){
     this.overide=overide;
     this.pipe=pipe;
+    setPipe();
   }
   
   /***
@@ -49,6 +52,5 @@ public class Vision extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    setPipe();
   }
 }
