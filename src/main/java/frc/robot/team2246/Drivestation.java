@@ -85,6 +85,9 @@ public class Drivestation extends SubsystemBase {
   public double getLeftZ(){return tune(leftStick.getZ());}
   public double getLeftSlider(){return leftStick.getThrottle();}
   public int getLeftPov(){return leftStick.getPOV();}
+  /**
+   * @param x degrees around the POV
+   */
   public boolean leftPovEquals(int x){return getLeftPov()==x;}
 
   public double getRightX(){return tune(rightStick.getX());}
@@ -92,6 +95,9 @@ public class Drivestation extends SubsystemBase {
   public double getRightZ(){return tune(rightStick.getZ());}
   public double getRightSlider(){return rightStick.getThrottle();}
   public int getRightPov(){return rightStick.getPOV();}
+  /**
+   * @param x degrees around the POV
+   */
   public boolean rightPovEquals(int x){return getRightPov()==x;}
 
   @Override
