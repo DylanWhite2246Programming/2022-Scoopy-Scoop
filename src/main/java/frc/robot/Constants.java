@@ -6,6 +6,8 @@ package frc.robot;
 
 import java.util.List;
 
+import com.revrobotics.SparkMaxPIDController;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -34,16 +36,19 @@ public final class Constants {
     }
     public static final class Ports{
         //CANID
-        public static final int kPDHCANID = 9;
-        public static final int kPnuematicsHubCANID = 10;
+        //REV
+        public static final int kPnuematicsHubCANID = 0;
         public static final int kLeft1CANID = 1;
         public static final int kLeft2CANID = 2;
         public static final int kRight1CANID = 3;
         public static final int kRight2CANID = 4;
-        public static final int kRollerCANID = 5;
-        public static final int kLifterCANID = 6;
-        public static final int kLeftShooterCANID = 7;
-        public static final int kRightShooterCANID = 8;
+        public static final int kLifterCANID = 5;
+        public static final int kPDHCANID = 6;
+        //CTRE
+        public static final int kRollerCANID = 7;
+        public static final int kLeftShooterCANID = 8;
+        public static final int kRightShooterCANID = 9;
+        public static final int kIntakeCANID = 10;
         //PCM ports
         public static final int[] climber1Ports = new int[]{1,2};
         public static final int[] climber2Ports = new int[]{3,4};
@@ -141,41 +146,48 @@ public final class Constants {
             = new DifferentialDriveKinematics(kTrackWidth);
     }
     public static final class ScoopConstants{
-        public static final double velocity = 0;
         public static final boolean kLeftEncoderReversed = false;
         public static final boolean kRightEncoderReversed = false;
         public static final boolean kLeftMotorInverted = false;
         public static final boolean kRightMotorInverted = false;
+        public static final boolean kRollerInversed = false;
+        public static final boolean kIntakeInversed = false;
         //METERS
-        public static final double kWheelDiameter = 4/39.37;
+        public static final double kWheelDiameter = 6/39.37;
         public static final int kCPR = 8196;
         //RADIANS
-        public static final double kDistancePerPulse = (Math.PI*2)/kCPR;
+        public static final double kDistancePerPulse = (Math.PI*2)*kWheelDiameter/kCPR;
     }
     public static final class LifterConstants{
-        public static final double kP = 0, kI = 0, kD = 0;
-        public static final int kMotorSproketToothCount = 1;   
-        public static final int kAxelSproketToothCount = 1;   
+        public static final double kP = 0, kI = 0/*keep 0*/, kD = 0;
+        public static final int kMotorSproketToothCount = 12;   
+        public static final int kAxelSproketToothCount = 48;   
         /**radians */
-        public static final double kConversionFactor = (double)(2*Math.PI*kAxelSproketToothCount)/kMotorSproketToothCount;
+        public static final double kConversionFactor = (double)(2*Math.PI*kMotorSproketToothCount)/(kAxelSproketToothCount*12.75);
+        /**radians/sec */  
+        public static final double kVelConversionFactor = (double)(2*Math.PI*kMotorSproketToothCount)/(kAxelSproketToothCount*12.75*60);
         /**radians*/
         public static final double kSecondClimbingPosition = 0;
         /**radians */
         public static final double kClimbPosition = 0;
         /**radians */
-        public static final double kOffSet = .174533; //10 degrees
+        public static final double kOffSet = 0; //10 degrees
+        /**radians */
+        public static final double kIntakeClerence = 0;
         /**radians/sec */
         public static final double kMaxVelocity = 0;
         /**radians/sec^2 */
         public static final double kMaxAcceleration = 0;
         /**meters */
         public static final double kClosestDistance = 0;
+        /**meters */
         public static final double kMaxDistance = 0;
     }
     public static final class MotorControllerValues{
         public static final double kIntakeValue = .3;
         public static final double kRollerValues = .25;
         public static final double kClimbSpeed = .75;
+        /**meters per second */
         public static final double kShooterVelocity = 10;
     }
 }

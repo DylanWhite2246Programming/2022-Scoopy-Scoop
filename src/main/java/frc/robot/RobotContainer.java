@@ -129,7 +129,7 @@ public class RobotContainer {
     controller.b01.whileActiveOnce(new InstantCommand(()->scoop.rollerShoot(), scoop));
     controller.b02.whileActiveOnce(new InstantCommand(()->climber.extendLifterSolenoid(), climber));
     //button row 1
-    controller.b10.whileActiveOnce(new InstantCommand(()->scoop.intakeShooter(), scoop));
+    controller.b10.whileActiveOnce(new InstantCommand(()->scoop.shooterIntake(), scoop));
     controller.b11.whileActiveOnce(new InstantCommand(()->scoop.shoot(MotorControllerValues.kShooterVelocity), scoop));
     controller.b12.whileActiveOnce(new InstantCommand(()->climber.retrackLifterSolenoid(), climber));
     //button row 2

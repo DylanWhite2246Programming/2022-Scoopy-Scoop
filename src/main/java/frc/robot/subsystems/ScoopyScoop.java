@@ -20,6 +20,7 @@ public class ScoopyScoop extends SubsystemBase {
   private final WPI_VictorSPX rollers = new WPI_VictorSPX(Ports.kRollerCANID);
   private final WPI_VictorSPX leftShooter = new WPI_VictorSPX(Ports.kLeftShooterCANID);
   private final WPI_VictorSPX rightShooter = new WPI_VictorSPX(Ports.kRightShooterCANID);
+  private final WPI_VictorSPX intake = new WPI_VictorSPX(Ports.kIntakeCANID);
   private final Encoder leftEncoder = new Encoder(
     Ports.kLeftShooterEncoderPorts[0], 
     Ports.kLeftShooterEncoderPorts[1], 
@@ -84,19 +85,22 @@ public class ScoopyScoop extends SubsystemBase {
         +rightPid.calculate(getRightVelocity(), setpoint)
     );
   }
+  public boolean shooterAtSetpoint(){
+    return leftPid.atSetpoint()&&
+    rightPid.atSetpoint();
+  }
   public void shooterSTOP(){
     leftShooter.stopMotor();
     rightShooter.stopMotor();
     shoot(0);
   }
-  public boolean shooterAtSetpoint(){
-    return leftPid.atSetpoint()&&
-      rightPid.atSetpoint();
-  }
-  public void intakeShooter(){
+  public void shooterIntake(){
     leftShooter.set(-MotorControllerValues.kIntakeValue);
     rightShooter.set(-MotorControllerValues.kIntakeValue);
   }
+  public void intakeIntake(){intake.set(MotorControllerValues.kIntakeValue);}
+  public void intakeReverse(){intake.set(-MotorControllerValues.kIntakeValue);}
+  public void intakeSTOP(){intake.stopMotor();}
   public void rollerIntake(){
     rollers.set(MotorControllerValues.kRollerValues);
   }
@@ -108,7 +112,8 @@ public class ScoopyScoop extends SubsystemBase {
   }
 
   public void autoIntake(){
-    intakeShooter();//intake shooter the hole time
+    shooterIntake();//intake shooter the hole time
+    intakeIntake();//run intake the hole time
     if(getFirstSensor()){
       if(getEntrySensor()&&getSecondSensor()==false){
         rollerIntake();

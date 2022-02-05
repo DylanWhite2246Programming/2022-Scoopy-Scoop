@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
@@ -16,6 +17,7 @@ import frc.robot.Constants.LifterConstants;
 import frc.robot.Constants.Ports;
 
 public class Lifter extends ProfiledPIDSubsystem {
+  private RelativeEncoder encoder;
   private final CANSparkMax motor = new CANSparkMax(Ports.kLifterCANID, MotorType.kBrushless);
   private final DigitalInput toplimit = new DigitalInput(Ports.kTopLimitPort);
   private final DigitalInput bottomlimit = new DigitalInput(Ports.kBottomLimitPort);
@@ -36,8 +38,10 @@ public class Lifter extends ProfiledPIDSubsystem {
         )
       )
     );
-    motor.getEncoder().setPosition(-LifterConstants.kOffSet);
-    motor.getEncoder().setPositionConversionFactor(LifterConstants.kConversionFactor);
+    encoder=motor.getEncoder();
+    encoder.setPositionConversionFactor(LifterConstants.kConversionFactor);
+    encoder.setVelocityConversionFactor(LifterConstants.kVelConversionFactor);
+    encoder.setPosition(-LifterConstants.kOffSet);
   }
   //TODO change values
   private double calculateLaunchAngle(double distance){
@@ -51,19 +55,16 @@ public class Lifter extends ProfiledPIDSubsystem {
       LifterConstants.kD
     );
     if(isEnabled()==false){enable();}
-    if(
-      distance>LifterConstants.kMaxDistance
-      ||distance<LifterConstants.kClosestDistance
-    ){
-      setGoal(calculateLaunchAngle(distance)); 
+    if(calculateLaunchAngle(distance)>LifterConstants.kIntakeClerence){
+      setGoal(calculateLaunchAngle(distance));
     }
   }
   /**
    * @param angle angle value in radians
    */
   public void setAngle(double angle, boolean climbing){
-    //TODO CHANGE
     if(climbing){
+      //TODO CHANGE
       getController().setPID(0, 0, 0);
     }else{
       getController().setPID(
@@ -74,6 +75,10 @@ public class Lifter extends ProfiledPIDSubsystem {
     }
     if(isEnabled()==false){enable();}
     setGoal(angle);
+  }
+  public void STOP(){
+    disable();
+    motor.stopMotor();
   }
 
   @Override
@@ -90,6 +95,6 @@ public class Lifter extends ProfiledPIDSubsystem {
   }
   @Override
   public double getMeasurement() {
-    return motor.getEncoder().getPosition();
+    return encoder.getPosition();
   }
 }
