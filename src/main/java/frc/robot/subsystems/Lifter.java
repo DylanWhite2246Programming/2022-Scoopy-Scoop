@@ -76,6 +76,15 @@ public class Lifter extends ProfiledPIDSubsystem {
     if(isEnabled()==false){enable();}
     setGoal(angle);
   }
+  private void setMotorVoltage(double x){
+    if(toplimit.get()&&x<=0){
+      motor.setVoltage(x);
+    }else if(bottomlimit.get()&&x>=0){
+      motor.setVoltage(x);
+    }else{
+      motor.stopMotor();
+    }
+  }
   public void STOP(){
     disable();
     motor.stopMotor();
@@ -83,15 +92,7 @@ public class Lifter extends ProfiledPIDSubsystem {
 
   @Override
   public void useOutput(double output, TrapezoidProfile.State setpoint) {
-    var a = feedforward.calculate(setpoint.position, setpoint.velocity);
-    var outputVolts = a+output;
-    if(toplimit.get()&&outputVolts<=0){
-      motor.setVoltage(outputVolts);
-    }else if(bottomlimit.get()&&outputVolts>=0){
-      motor.setVoltage(outputVolts);
-    }else{
-      motor.stopMotor();
-    }
+    setMotorVoltage(feedforward.calculate(setpoint.position, setpoint.velocity)+output);
   }
   @Override
   public double getMeasurement() {
