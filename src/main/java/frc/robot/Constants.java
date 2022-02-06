@@ -75,31 +75,7 @@ public final class Constants {
         );
 
     }
-    public static final class FieldConstants{
-       public static final class StartingPoses{
-           //TODO change
-           public static final Pose2d red1  = new Pose2d(0, 0, new Rotation2d(0));
-           public static final Pose2d red2  = new Pose2d(0, 0, new Rotation2d(0));
-           public static final Pose2d red3  = new Pose2d(0, 0, new Rotation2d(0));
-           public static final Pose2d blue1 = new Pose2d(0, 0, new Rotation2d(0));
-           public static final Pose2d blue2 = new Pose2d(0, 0, new Rotation2d(0));
-           public static final Pose2d blue3 = new Pose2d(0, 0, new Rotation2d(0));
-       } 
-       public static final class Balls{
-           public static final Translation2d red1  = new Translation2d(0, 0);
-           public static final Translation2d red2  = new Translation2d(0, 0);
-           public static final Translation2d red3  = new Translation2d(0, 0);
-           public static final Translation2d red4  = new Translation2d(0, 0);
-           public static final Translation2d red5  = new Translation2d(0, 0);
-           public static final Translation2d red6  = new Translation2d(0, 0);
-           public static final Translation2d blue1 = new Translation2d(0, 0);
-           public static final Translation2d blue2 = new Translation2d(0, 0);
-           public static final Translation2d blue3 = new Translation2d(0, 0);
-           public static final Translation2d blue4 = new Translation2d(0, 0);
-           public static final Translation2d blue5 = new Translation2d(0, 0);
-           public static final Translation2d blue6 = new Translation2d(0, 0);
-       }
-    }
+    
     public static final class AutonCommandConstants{
         public static final double kMaxVoltage = 10.0;
         /**meters/s */
