@@ -162,7 +162,7 @@ public final class Constants {
         /**radians */
         public static final double kConversionFactor = 2*Math.PI*kFinalGearRatio;
         /**radians/sec */  
-        public static final double kVelConversionFactor = (2*Math.PI*kFinalGearRatio)/60;
+        public static final double kVelConversionFactor = kConversionFactor/60;
         /**radians*/
         public static final double kSecondClimbingPosition = 0;
         /**radians */
