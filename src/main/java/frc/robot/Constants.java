@@ -63,7 +63,6 @@ public final class Constants {
         public static final int[] kUSBPorts = new int[]{0,1,2,3};
     }
     public static final class AutonTrajectorys{
-        public static final Pose2d climbPosition = new Pose2d(0, 0, new Rotation2d(0));
         public static final Trajectory kAuton1 = TrajectoryGenerator.generateTrajectory(
             new Pose2d(0,0, new Rotation2d(0)), 
             List.of(
@@ -75,7 +74,7 @@ public final class Constants {
         );
 
     }
-    
+
     public static final class AutonCommandConstants{
         public static final double kMaxVoltage = 10.0;
         /**meters/s */

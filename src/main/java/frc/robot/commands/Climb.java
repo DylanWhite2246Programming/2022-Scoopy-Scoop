@@ -23,9 +23,6 @@ public class Climb extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      //new InstantCommand(()->climber.extendBackSolenoid(), climber),
-      //new WaitCommand(.75),
-      //AutonCommands.moveToClimb(drivetrain),
       new InstantCommand(()->climber.retrackBackSolenoid(), climber),
       new WaitCommand(1.8),
       new InstantCommand(()->lifter.setAngle(LifterConstants.kClimbPosition, true), lifter),
