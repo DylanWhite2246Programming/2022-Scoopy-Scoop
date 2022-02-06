@@ -158,12 +158,11 @@ public final class Constants {
     }
     public static final class LifterConstants{
         public static final double kP = 0, kI = 0/*keep 0*/, kD = 0;
-        public static final int kMotorSproketToothCount = 12;   
-        public static final int kAxelSproketToothCount = 48;   
+        public static final double kFinalGearRatio = (double)1/51;
         /**radians */
-        public static final double kConversionFactor = (double)(2*Math.PI*kMotorSproketToothCount)/(kAxelSproketToothCount*12.75);
+        public static final double kConversionFactor = 2*Math.PI*kFinalGearRatio;
         /**radians/sec */  
-        public static final double kVelConversionFactor = (double)(2*Math.PI*kMotorSproketToothCount)/(kAxelSproketToothCount*12.75*60);
+        public static final double kVelConversionFactor = (2*Math.PI*kFinalGearRatio)/60;
         /**radians*/
         public static final double kSecondClimbingPosition = 0;
         /**radians */
