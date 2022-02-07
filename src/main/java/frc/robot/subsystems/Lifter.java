@@ -12,6 +12,7 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import frc.robot.Constants.LifterConstants;
 import frc.robot.Constants.Ports;
@@ -27,7 +28,6 @@ public class Lifter extends ProfiledPIDSubsystem {
   public Lifter() {
     super(
       // The ProfiledPIDController used by the subsystem
-      //TODO change values
       new ProfiledPIDController(
         LifterConstants.kP,
         LifterConstants.kI,
@@ -42,6 +42,7 @@ public class Lifter extends ProfiledPIDSubsystem {
     encoder.setPositionConversionFactor(LifterConstants.kConversionFactor);
     encoder.setVelocityConversionFactor(LifterConstants.kVelConversionFactor);
     encoder.setPosition(-LifterConstants.kOffSet);
+    getController().setTolerance(LifterConstants.kTolerence);
   }
   //TODO change values
   private double calculateLaunchAngle(double distance){
@@ -97,5 +98,13 @@ public class Lifter extends ProfiledPIDSubsystem {
   @Override
   public double getMeasurement() {
     return encoder.getPosition();
+  }
+  @Override
+  public void periodic(){
+    SmartDashboard.putNumber("Lift Position", getMeasurement());
+    SmartDashboard.putNumber("Output Voltage", motor.getAppliedOutput());
+    SmartDashboard.putBoolean("Top Limit", toplimit.get());
+    SmartDashboard.putBoolean("Bottom Limit", bottomlimit.get());
+    SmartDashboard.putBoolean("At Goal", getController().atGoal());
   }
 }

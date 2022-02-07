@@ -17,6 +17,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.Ports;
@@ -143,6 +144,7 @@ public class Drivetrain extends SubsystemBase {
   public void periodic() {
     //TODO add network table stuff
     odometry.update(getRotation2d(), getLeftDistance(), getRightDistance());
+    //SmartDashboard.putnu
   }
 
   @Override
