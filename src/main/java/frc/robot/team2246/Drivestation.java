@@ -29,6 +29,8 @@ public class Drivestation extends SubsystemBase {
     rightStick = new Joystick(ports[3]);
   }
 
+  public boolean climbSafety(){return s03.getAsBoolean();}
+
   //ButtonBoard
   public final Button s00  = new Button(()->buttonboardA.getRawButton(0));
   public final Button s01  = new Button(()->buttonboardA.getRawButton(1));
@@ -66,6 +68,10 @@ public class Drivestation extends SubsystemBase {
   public final Button ls10 = new Button(()->leftStick.getRawButton(10));
   public final Button ls11 = new Button(()->leftStick.getRawButton(11));
 
+  public double getLeftX(){return tune(leftStick.getX());}
+  public double getLeftY(){return limiter.calculate(tune(leftStick.getY()));}
+  public double getLeftSlider(){return leftStick.getThrottle();}
+
   //right joystick
   public final Button rs0  = new Button(()->rightStick.getRawButton(0));
   public final Button rs1  = new Button(()->rightStick.getRawButton(1));
@@ -80,25 +86,16 @@ public class Drivestation extends SubsystemBase {
   public final Button rs10 = new Button(()->rightStick.getRawButton(10));
   public final Button rs11 = new Button(()->rightStick.getRawButton(11));
 
-  public double getLeftX(){return tune(leftStick.getX());}
-  public double getLeftY(){return limiter.calculate(tune(leftStick.getY()));}
-  public double getLeftZ(){return tune(leftStick.getZ());}
-  public double getLeftSlider(){return leftStick.getThrottle();}
-  public int getLeftPov(){return leftStick.getPOV();}
-  /**
-   * @param x degrees around the POV
-   */
-  public boolean leftPovEquals(int x){return getLeftPov()==x;}
+  public final Button rsPOVup = new Button(()->getRightPov()==0);
+  public final Button rsPOVright = new Button(()->getRightPov()==90);
+  public final Button rsPOVdown = new Button(()->getRightPov()==180);
+  public final Button rsPOVleft = new Button(()->getRightPov()==270);
 
   public double getRightX(){return tune(rightStick.getX());}
   public double getRightY(){return limiter.calculate(tune(rightStick.getY()));}
   public double getRightZ(){return tune(rightStick.getZ());}
   public double getRightSlider(){return rightStick.getThrottle();}
   public int getRightPov(){return rightStick.getPOV();}
-  /**
-   * @param x degrees around the POV
-   */
-  public boolean rightPovEquals(int x){return getRightPov()==x;}
 
   @Override
   public void periodic() {

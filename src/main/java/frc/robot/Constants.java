@@ -34,20 +34,20 @@ public final class Constants {
     }
     public static final class Ports{
         //CANID
-        //REV
-        public static final int kLeft1CANID = 1;
-        public static final int kLeft2CANID = 2;
-        public static final int kRight1CANID = 3;
-        public static final int kRight2CANID = 4;
-        public static final int kLifterCANID = 5;
-        public static final int kPDHCANID = 6;
-        public static final int kPnuematicsHubCANID = 7;
-        //CTRE
-        public static final int kRollerCANID = 8;
-        public static final int kLeftShooterCANID = 9;
-        public static final int kRightShooterCANID = 10;
-        public static final int kIntakeCANID = 11;
-        //PCM ports
+            //REV
+            public static final int kLeft1CANID = 1;
+            public static final int kLeft2CANID = 2;
+            public static final int kRight1CANID = 3;
+            public static final int kRight2CANID = 4;
+            public static final int kLifterCANID = 5;
+            public static final int kPDHCANID = 6;
+            public static final int kPnuematicsHubCANID = 7;
+            //CTRE
+            public static final int kRollerCANID = 8;
+            public static final int kLeftShooterCANID = 9;
+            public static final int kRightShooterCANID = 10;
+            public static final int kIntakeCANID = 11;
+        //PH ports
         public static final int[] climber1Ports = new int[]{1,2};
         public static final int[] climber2Ports = new int[]{3,4};
         //DIO might be unnessisary
@@ -60,7 +60,7 @@ public final class Constants {
         public static final int kSecondBallSensor = 8;
         //Robot USB
         //Controller Ports
-        public static final int[] kUSBPorts = new int[]{0,1,2,3};
+        public static final int[] kUSBPorts = new int[]{1,2,3,4};
     }
     public static final class AutonTrajectorys{
         public static final Trajectory kAuton1 = TrajectoryGenerator.generateTrajectory(

@@ -27,7 +27,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.button.Button;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -85,9 +84,9 @@ public class RobotContainer {
       new InstantCommand(()->vision.setDriverMode(true), vision)
     ));
     //POV
-    new Button(()->controller.leftPovEquals(0))
+    controller.rsPOVup
       .whenPressed(new InstantCommand(()->climber.extendBackSolenoid()));
-    new Button(()->controller.leftPovEquals(180))
+    controller.rsPOVup
       .whenPressed(new InstantCommand(()->climber.retrackBackSolenoid()));
     //rightstick
     controller.rs0
@@ -128,6 +127,7 @@ public class RobotContainer {
         lift
       )
     );
+    controller.s03.whenPressed(()->climber.setSafety(true), climber);
     //switch row 1
     controller.s13.whileActiveContinuous(new InstantCommand(()->power.compressorOn(), power))
       .whenInactive(new RunCommand(()->power.compressorOff(), power), true);
@@ -135,20 +135,13 @@ public class RobotContainer {
     controller.b00.whileActiveOnce(new InstantCommand(()->scoop.rollerIntake(), scoop));
     controller.b01.whileActiveOnce(new InstantCommand(()->scoop.rollerShoot(), scoop));
     controller.b02.whileActiveContinuous(()->scoop.intakeReverse(), scoop);
-    controller.b03.whenPressed(new ConditionalCommand(
-      new InstantCommand(()->climber.retrackLifterSolenoid()), 
-      null, 
-      climbSafetySwitch)
-    );
+    controller.b03.whenPressed(new InstantCommand(()->climber.extendLifterSolenoid()));
+      
     //button row 1
     controller.b10.whileActiveContinuous(()->scoop.shooterIntake(), scoop);
     controller.b11.whileActiveOnce(new InstantCommand(()->scoop.shoot(MotorControllerValues.kShooterVelocity), scoop));
     controller.b12.whileActiveContinuous(()->scoop.intakeIntake(), scoop);
-    controller.b13.whenPressed(new ConditionalCommand(
-      new InstantCommand(()->climber.retrackLifterSolenoid()), 
-      null, 
-      climbSafetySwitch)
-    );
+    controller.b13.whenPressed(new InstantCommand(()->climber.retrackLifterSolenoid()));
     //button row 2
     controller.b20.whileActiveOnce(
       new ParallelCommandGroup(
