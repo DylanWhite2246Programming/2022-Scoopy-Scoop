@@ -54,8 +54,8 @@ public class ScoopyScoop extends SubsystemBase {
     leftEncoder.setDistancePerPulse(ScoopConstants.kDistancePerPulse);
     rightEncoder.setDistancePerPulse(ScoopConstants.kDistancePerPulse);
     //TODO create constants
-    leftEncoder.setReverseDirection(false);
-    rightEncoder.setReverseDirection(false);
+    leftEncoder.setReverseDirection(ScoopConstants.kLeftEncoderReversed);
+    rightEncoder.setReverseDirection(ScoopConstants.kRightEncoderReversed);
     leftShooter.setInverted(ScoopConstants.kLeftMotorInverted);
     rightShooter.setInverted(ScoopConstants.kRightMotorInverted);
   }
