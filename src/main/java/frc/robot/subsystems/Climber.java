@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Ports;
 
 public class Climber extends SubsystemBase {
+
+  private boolean safety;
   
   private final DoubleSolenoid backSolenoid
     = new DoubleSolenoid(
@@ -32,15 +34,17 @@ public class Climber extends SubsystemBase {
     retrackLifterSolenoid();
   }
 
+  public void setSafety(boolean value){safety=value;}
+
   public void extendBackSolenoid(){
-    backSolenoid.set(Value.kForward);
+    if(safety)backSolenoid.set(Value.kForward);
   }
   public void retrackBackSolenoid(){
     backSolenoid.set(Value.kReverse);
   }
 
   public void extendLifterSolenoid(){
-    lifterSolenoid.set(Value.kForward);
+    if(safety)lifterSolenoid.set(Value.kForward);
   }
   public void retrackLifterSolenoid(){
     lifterSolenoid.set(Value.kReverse);
