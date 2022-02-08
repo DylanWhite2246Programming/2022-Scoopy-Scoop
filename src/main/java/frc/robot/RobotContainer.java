@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import java.util.function.BooleanSupplier;
-
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
@@ -22,7 +20,6 @@ import frc.robot.subsystems.Vision;
 import frc.robot.team2246.Drivestation;
 import frc.robot.team2246.NetworktableHandeler;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -45,8 +42,6 @@ public class RobotContainer {
   
   private final Drivestation controller = new Drivestation(Ports.kUSBPorts);
   private final NetworktableHandeler tableButtons = new NetworktableHandeler();
-
-  private BooleanSupplier climbSafetySwitch = controller.s03::get;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -160,10 +155,7 @@ public class RobotContainer {
         .andThen(new RunCommand(()->scoop.autoFeedShooter(), scoop))
       )
       .whenInactive(new InstantCommand(()->power.setAutoMode(false), power));
-    controller.b22.whenPressed(
-      new ConditionalCommand(new Climb(climber, lift, drivetrain), null, climbSafetySwitch)
-      
-    );
+    controller.b22.whenPressed(new Climb(climber, lift, drivetrain));
 
   }
 
