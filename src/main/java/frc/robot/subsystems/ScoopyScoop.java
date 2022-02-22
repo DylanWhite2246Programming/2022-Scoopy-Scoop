@@ -58,19 +58,19 @@ public class ScoopyScoop extends SubsystemBase {
   }
 
   /**
-   * @return left shooter speed in radians per second
+   * @return left shooter speed in meters per second
    */
   public double getLeftVelocity(){
     return leftEncoder.getRate();
   }
   /**
-   * @return right shooter speed in radians per second
+   * @return right shooter speed in meters per second
    */
   public double getRightVelocity(){
     return rightEncoder.getRate();
   }
   /**
-   * @param setpoint desired velocity in radians per second
+   * @param setpoint desired velocity in meters per second
    */
   public void shoot(double setpoint){
     leftShooter.setVoltage(
