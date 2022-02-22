@@ -17,7 +17,7 @@ import frc.robot.Constants.ScoopConstants;
 
 public class ScoopyScoop extends SubsystemBase {
 
-  private final WPI_VictorSPX rollers = new WPI_VictorSPX(Ports.kRollerCANID);
+  private final WPI_VictorSPX belt = new WPI_VictorSPX(Ports.kBeltCANID);
   private final WPI_VictorSPX leftShooter = new WPI_VictorSPX(Ports.kLeftShooterCANID);
   private final WPI_VictorSPX rightShooter = new WPI_VictorSPX(Ports.kRightShooterCANID);
   private final WPI_VictorSPX intake = new WPI_VictorSPX(Ports.kIntakeCANID);
@@ -31,10 +31,7 @@ public class ScoopyScoop extends SubsystemBase {
     Ports.kRightShooterEncoderPorts[1], 
     ScoopConstants.kRightEncoderReversed
   );
-
-  private final DigitalInput entrySensor = new DigitalInput(Ports.kEntrySensor);
-  private final DigitalInput firstBallSensor = new DigitalInput(Ports.kFirstBallSensor);
-  private final DigitalInput secondBallSensor = new DigitalInput(Ports.kSecondBallSensor);
+  private final DigitalInput ballSensor = new DigitalInput(Ports.kBallSensorPort);
 
   //TODO change
   private final SimpleMotorFeedforward leftFeedForward 
@@ -102,24 +99,20 @@ public class ScoopyScoop extends SubsystemBase {
   public void intakeReverse(){intake.set(-MotorControllerValues.kIntakeValue);}
   public void intakeSTOP(){intake.stopMotor();}
   public void rollerIntake(){
-    rollers.set(MotorControllerValues.kRollerValues);
+    belt.set(MotorControllerValues.kRollerValues);
   }
   public void rollerShoot(){
-    rollers.set(-MotorControllerValues.kRollerValues);
+    belt.set(-MotorControllerValues.kRollerValues);
   }
   public void rollerSTOP(){
-    rollers.stopMotor();
+    belt.stopMotor();
   }
 
   public void autoIntake(){
     shooterIntake();//intake shooter the hole time
     intakeIntake();//run intake the hole time
-    if(getFirstSensor()){
-      if(getEntrySensor()&&getSecondSensor()==false){
-        rollerIntake();
-      }else{
-        rollerSTOP();
-      }
+    if(getBallSensor()){
+      rollerSTOP();
     }else{
       rollerIntake();//intake rollers when all sensors are false
     }
@@ -132,9 +125,7 @@ public class ScoopyScoop extends SubsystemBase {
     }
   }
 
-  public boolean getEntrySensor(){return entrySensor.get();}
-  public boolean getFirstSensor(){return firstBallSensor.get();}
-  public boolean getSecondSensor(){return secondBallSensor.get();}
+  public boolean getBallSensor(){return ballSensor.get();}
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

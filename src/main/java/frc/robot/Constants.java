@@ -43,7 +43,7 @@ public final class Constants {
             public static final int kPDHCANID = 6;
             public static final int kPnuematicsHubCANID = 7;
             //CTRE
-            public static final int kRollerCANID = 8;
+            public static final int kBeltCANID = 8;
             public static final int kLeftShooterCANID = 9;
             public static final int kRightShooterCANID = 10;
             public static final int kIntakeCANID = 11;
@@ -55,9 +55,7 @@ public final class Constants {
         public static final int[] kRightShooterEncoderPorts = new int[]{2,3};
         public static final int kBottomLimitPort = 4;
         public static final int kTopLimitPort = 5;
-        public static final int kEntrySensor = 6;
-        public static final int kFirstBallSensor = 7;
-        public static final int kSecondBallSensor = 8;
+        public static final int kBallSensorPort = 6;
         //Robot USB
         //Controller Ports
         public static final int[] kUSBPorts = new int[]{1,2,3,4};
