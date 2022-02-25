@@ -4,17 +4,16 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import frc.robot.Constants.AutonCommandConstants;
-import frc.robot.Constants.AutonTrajectorys;
 import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.subsystems.Drivetrain;
-
 /** Add your docs here. */
 public class AutonCommands {
-    public static RamseteCommand auton1(Drivetrain drivetrain){
+    public static RamseteCommand ramseteCommandGenerator(Drivetrain drivetrain, Trajectory trajectory){
         return new RamseteCommand(
-            AutonTrajectorys.kAuton1, 
+            trajectory, 
             drivetrain::getPose, 
             AutonCommandConstants.controller, 
             AutonCommandConstants.feedForward, 
