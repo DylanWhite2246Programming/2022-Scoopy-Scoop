@@ -70,9 +70,6 @@ public final class Constants {
             new Pose2d(3, 0, new Rotation2d(0)), 
             AutonCommandConstants.trajectoryConfig
         );
-        public static final class BallPose{
-            public static final ball1 = 
-        }
     }
 
     public static final class AutonCommandConstants{
@@ -128,8 +125,8 @@ public final class Constants {
         //METERS
         public static final double kWheelDiameter = 6/39.37;
         public static final int kCPR = 8196;
-        //Meters
-        public static final double kDistancePerPulse = (Math.PI*2*kWheelDiameter*.5)/kCPR;
+        //RADIANS
+        public static final double kDistancePerPulse = (Math.PI*2)*kWheelDiameter/kCPR;
     }
     public static final class LifterConstants{
         public static final double kP = 0, kI = 0/*keep 0*/, kD = 0;
