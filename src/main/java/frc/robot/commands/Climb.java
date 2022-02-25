@@ -22,6 +22,7 @@ public class Climb extends SequentialCommandGroup {
     drivetrain.stop();
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
+    //TODO Fix
     addCommands(
       new InstantCommand(()->climber.retrackBackSolenoid(), climber),
       new WaitCommand(1.8),
