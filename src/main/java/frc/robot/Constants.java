@@ -70,6 +70,9 @@ public final class Constants {
             new Pose2d(3, 0, new Rotation2d(0)), 
             AutonCommandConstants.trajectoryConfig
         );
+        public static final class BallTrans{
+            public static final Translation2d ball1 = new Translation2d(0, 0)
+        }
     }
 
     public static final class AutonCommandConstants{
