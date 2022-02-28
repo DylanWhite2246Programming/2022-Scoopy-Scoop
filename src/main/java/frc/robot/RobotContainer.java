@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.Constants.MotorControllerValues;
 import frc.robot.Constants.Ports;
-import frc.robot.commands.Climb;
+import frc.robot.commands.Climb2;
 import frc.robot.commands.FacePose;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
@@ -43,6 +43,8 @@ public class RobotContainer {
   private final Drivestation controller = new Drivestation(Ports.kUSBPorts);
   private final NetworktableHandeler tableButtons = new NetworktableHandeler();
 
+  private final RunCommand intake = new RunCommand(()->{scoop.intakeIntake();scoop.rollerIntake();}, scoop);
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
@@ -73,7 +75,7 @@ public class RobotContainer {
         new InstantCommand(()->power.setAutoMode(true), power),
         new InstantCommand(()->vision.setDriverMode(false), vision)
       )
-      .andThen(new RunCommand(()->scoop.autoIntake(), scoop))
+      .andThen(intake)
     ).whenInactive(new ParallelCommandGroup(
       new InstantCommand(()->power.setAutoMode(false), power),
       new InstantCommand(()->vision.setDriverMode(true), vision)
@@ -143,7 +145,7 @@ public class RobotContainer {
         new InstantCommand(()->power.setAutoMode(true), power),
         new InstantCommand(()->vision.setDriverMode(false), vision)
       )
-      .andThen(new RunCommand(()->scoop.autoIntake(), scoop))
+      .andThen(intake)
     ).whenInactive(new ParallelCommandGroup(
       new InstantCommand(()->power.setAutoMode(false), power),
       new InstantCommand(()->vision.setDriverMode(true), vision)
@@ -155,7 +157,7 @@ public class RobotContainer {
         .andThen(new RunCommand(()->scoop.autoFeedShooter(), scoop))
       )
       .whenInactive(new InstantCommand(()->power.setAutoMode(false), power));
-    controller.b22.whenPressed(new Climb(climber, lift, drivetrain));
+    controller.b22.whenPressed(new Climb2(climber, lift, drivetrain));
 
   }
 
