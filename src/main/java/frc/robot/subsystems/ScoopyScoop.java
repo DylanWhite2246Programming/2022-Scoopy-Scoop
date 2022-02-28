@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.BooleanSupplier;
+
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -107,9 +109,9 @@ public class ScoopyScoop extends SubsystemBase {
   public void rollerSTOP(){
     belt.stopMotor();
   }
-  
-  public void autoFeedShooter(){
-    if(shooterAtSetpoint()){
+
+  public void autoFeedShooter(BooleanSupplier lifterAtSetpoint){
+    if(shooterAtSetpoint()&&lifterAtSetpoint.getAsBoolean()){
       rollerShoot();
     }else{
       rollerSTOP();
