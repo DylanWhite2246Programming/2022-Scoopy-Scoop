@@ -16,14 +16,14 @@ import frc.robot.subsystems.Lifter;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class Climb extends SequentialCommandGroup {
+public class Climb2 extends SequentialCommandGroup {
   /** Creates a new Climb. */
-  public Climb(Climber climber, Lifter lifter, Drivetrain drivetrain) {
-    drivetrain.stop();
+  public Climb2(Climber climber, Lifter lifter, Drivetrain drivetrain) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     //TODO Fix
     addCommands(
+      new InstantCommand(()->{drivetrain.stop();}, drivetrain),
       new InstantCommand(()->climber.retrackBackSolenoid(), climber),
       new WaitCommand(1.8),
       new InstantCommand(()->lifter.setAngle(LifterConstants.kClimbPosition, true), lifter),

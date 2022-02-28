@@ -43,10 +43,10 @@ public final class Constants {
             public static final int kPDHCANID = 6;
             public static final int kPnuematicsHubCANID = 7;
             //CTRE
-            public static final int kBeltCANID = 8;
-            public static final int kLeftShooterCANID = 9;
-            public static final int kRightShooterCANID = 10;
-            public static final int kIntakeCANID = 11;
+            public static final int kIntakeCANID = 8;
+            public static final int kBeltCANID = 9;
+            public static final int kLeftShooterCANID = 10;
+            public static final int kRightShooterCANID = 11;
         //PH ports
         public static final int[] climber1Ports = new int[]{1,2};
         public static final int[] climber2Ports = new int[]{3,4};
@@ -58,7 +58,7 @@ public final class Constants {
         public static final int kBallSensorPort = 6;
         //Robot USB
         //Controller Ports
-        public static final int[] kUSBPorts = new int[]{1,2,3,4};
+        public static final int[] kUSBPorts = new int[]{0,1,2,3};
     }
     public static final class AutonTrajectorys{
         public static final Trajectory kAuton1 = TrajectoryGenerator.generateTrajectory(
@@ -71,7 +71,9 @@ public final class Constants {
             AutonCommandConstants.trajectoryConfig
         );
         public static final class BallTrans{
-            public static final Translation2d ball1 = new Translation2d(0, 0)
+            public static final Translation2d ball1 = new Translation2d(0, 0);
+            public static final Translation2d ball2 = new Translation2d(0, 0);
+            public static final Translation2d ball3 = new Translation2d(0, 0);
         }
     }
 

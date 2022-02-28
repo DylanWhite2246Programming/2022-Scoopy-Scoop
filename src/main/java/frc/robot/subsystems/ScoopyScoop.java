@@ -107,16 +107,7 @@ public class ScoopyScoop extends SubsystemBase {
   public void rollerSTOP(){
     belt.stopMotor();
   }
-
-  public void autoIntake(){
-    shooterIntake();//intake shooter the hole time
-    intakeIntake();//run intake the hole time
-    if(getBallSensor()){
-      rollerSTOP();
-    }else{
-      rollerIntake();//intake rollers when all sensors are false
-    }
-  }
+  
   public void autoFeedShooter(){
     if(shooterAtSetpoint()){
       rollerShoot();

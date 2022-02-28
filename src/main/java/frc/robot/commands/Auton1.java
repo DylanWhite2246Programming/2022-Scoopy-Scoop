@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.AutonTrajectorys;
+import frc.robot.Constants.AutonTrajectorys.BallTrans;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Lifter;
 import frc.robot.subsystems.ScoopyScoop;
@@ -32,8 +33,15 @@ public class Auton1 extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    while(drivetrain.getDistanceTo(AutonTrajectorys.kAuton1.get)){
-
+    if(drivetrain.getDistanceTo(BallTrans.ball1)<1){
+      scoop.intakeIntake();
+      scoop.rollerIntake();
+    }
+    else if(drivetrain.getDistanceTo(BallTrans.ball2)<1){
+      scoop.intakeIntake();
+      scoop.rollerIntake();
+    }else{
+      scoop.intakeSTOP();
     }
   }
 
