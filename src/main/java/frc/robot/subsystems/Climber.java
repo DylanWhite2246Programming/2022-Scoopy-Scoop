@@ -32,9 +32,11 @@ public class Climber extends SubsystemBase {
   /** Creates a new Climber. */
   public Climber() {
     retrackLifterSolenoid();
+    retrackBackSolenoid();
   }
 
   public void setSafety(boolean value){safety=value;}
+  public boolean getSafety(){return safety;}
 
   public void extendBackSolenoid(){
     if(safety)backSolenoid.set(Value.kForward);
