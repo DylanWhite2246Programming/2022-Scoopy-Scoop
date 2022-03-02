@@ -35,21 +35,21 @@ public final class Constants {
     public static final class Ports{
         //CANID
             //REV
-            public static final int kLeft1CANID = 1;
-            public static final int kLeft2CANID = 2;
-            public static final int kRight1CANID = 3;
-            public static final int kRight2CANID = 4;
+            public static final int kRight1CANID = 1;
+            public static final int kRight2CANID = 2;
+            public static final int kLeft1CANID = 3;
+            public static final int kLeft2CANID = 4;
             public static final int kLifterCANID = 5;
             public static final int kPDHCANID = 6;
             public static final int kPnuematicsHubCANID = 7;
             //CTRE
-            public static final int kIntakeCANID = 8;
-            public static final int kBeltCANID = 9;
-            public static final int kLeftShooterCANID = 10;
-            public static final int kRightShooterCANID = 11;
+            public static final int kBeltCANID = 8;
+            public static final int kLeftShooterCANID = 9;
+            public static final int kRightShooterCANID = 10;
+            public static final int kIntakeCANID = 11;
         //PH ports
-        public static final int[] climber1Ports = new int[]{17,18};
-        public static final int[] climber2Ports = new int[]{19,20};
+        public static final int[] climber1Ports = new int[]{12,13};
+        public static final int[] climber2Ports = new int[]{14,15};
         //DIO might be unnessisary
         public static final int[] kLeftShooterEncoderPorts = new int[]{0,1};
         public static final int[] kRightShooterEncoderPorts = new int[]{2,3};
