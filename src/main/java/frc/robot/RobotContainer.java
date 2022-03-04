@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.simulation.JoystickSim;
 import frc.robot.Constants.LifterConstants;
 import frc.robot.Constants.MotorControllerValues;
@@ -18,13 +19,14 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Lifter;
 import frc.robot.subsystems.PowerAndPneumatics;
-import frc.robot.subsystems.ScoopyScoop;
 import frc.robot.subsystems.Shooters;
 import frc.robot.subsystems.Vision;
 import frc.robot.team2246.Drivestation;
 import frc.robot.team2246.NetworktableHandeler;
+import frc.robot.team2246.ToggleableMotor;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 
@@ -40,25 +42,18 @@ public class RobotContainer {
   private final Drivetrain drivetrain = new Drivetrain();
   private final Lifter lift = new Lifter();
   private final PowerAndPneumatics power = new PowerAndPneumatics();
-  private final ScoopyScoop scoop = new ScoopyScoop();
   private final Shooters shooters = new Shooters();
   private final Vision vision = new Vision();
+
+  private final ToggleableMotor intake = new ToggleableMotor(Ports.kIntakeCANID, MotorControllerValues.kIntakeValue);
+  private final ToggleableMotor belt = new ToggleableMotor(Ports.kBeltCANID, 1);
   
   //private final Drivestation controller = new Drivestation(Ports.kUSBPorts);
   private final NetworktableHandeler tableButtons = new NetworktableHandeler();
   private final Joystick stick = new Joystick(0);
 
-  private final RunCommand intakeForward = new RunCommand(()->{scoop.intakeIntake();}, scoop);
-  private final RunCommand intakeReverse = new RunCommand(()->{scoop.intakeReverse();}, scoop);
-  private final InstantCommand stopIntake = new InstantCommand(()->{scoop.intakeSTOP();}, scoop);
-  
-  private final RunCommand beltForward = new RunCommand(()->{scoop.rollerIntake();}, scoop);
-  private final RunCommand beltReverse = new RunCommand(()->{scoop.rollerShoot();}, scoop);
-  private final InstantCommand beltStop = new InstantCommand(()->{scoop.rollerSTOP();}, scoop);
-  
   private final BooleanSupplier shooterReady = ()->{return shooters.atSetpoint()&&lift.getController().atSetpoint();};
-  private final RunCommand autoFeedShooter = new RunCommand(()->{scoop.autoFeedShooter(shooterReady);}, scoop);
-  private final RunCommand intake = new RunCommand(()->{scoop.intakeIntake();scoop.rollerIntake();}, scoop);
+  private final ParallelCommandGroup intakeBoth = new ParallelCommandGroup(intake.forward,belt.forward);
 
   private final InstantCommand startShooter = new InstantCommand(()->{shooters.shoot(MotorControllerValues.kShooterVelocity);}, shooters);
   
