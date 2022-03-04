@@ -12,10 +12,24 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class ToggleableMotor extends SubsystemBase {
   private WPI_VictorSPX motor;
   private double speed;
-  /** Creates a new ToggleableMotor. */
+  /**
+   * creates a victor spx motor controller with the given parameters assumed to not be reversed
+   * @param canid can id to construct the victor spx
+   * @param speed the speed to be used both forward and back
+   * @param inverted wether or not the motor is inverted
+   */
   public ToggleableMotor(int canid, double speed, boolean inverted) {
     motor = new WPI_VictorSPX(canid);
+    this.speed=speed;
     motor.setInverted(inverted);
+  }
+  /**
+   * creates a victor spx motor controller with the given parameters assumed to not be reversed
+   * @param canid can id to construct the victor spx
+   * @param speed the speed to be used both forward and back
+   */
+  public ToggleableMotor(int canid, double speed){
+    motor = new WPI_VictorSPX(canid);
     this.speed=speed;
   }
 
