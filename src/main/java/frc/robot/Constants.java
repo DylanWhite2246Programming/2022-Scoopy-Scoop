@@ -158,6 +158,7 @@ public final class Constants {
         public static final double kClosestDistance = 0;
         /**meters */
         public static final double kMaxDistance = 0;
+        public static final boolean kInverted = false;
     }
     public static final class MotorControllerValues{
         public static final double kIntakeValue = .3;

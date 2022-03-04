@@ -30,6 +30,7 @@ public class Drivestation extends SubsystemBase {
   }
 
   public boolean climbSafety(){return s03.getAsBoolean();}
+  public boolean slewImposer(){return s02.getAsBoolean();}
 
   //ButtonBoard
   public final Button s00  = new Button(()->buttonboardA.getRawButton(0));
@@ -66,10 +67,17 @@ public class Drivestation extends SubsystemBase {
   public final Button ls8  = new Button(()->leftStick.getRawButton(8));
   public final Button ls9  = new Button(()->leftStick.getRawButton(9));
   public final Button ls10 = new Button(()->leftStick.getRawButton(10));
-  public final Button ls11 = new Button(()->leftStick.getRawButton(11));
+  //public final Button ls11 = new Button(()->leftStick.getRawButton(11));
 
   public double getLeftX(){return tune(leftStick.getX());}
-  public double getLeftY(){return limiter.calculate(tune(leftStick.getY()));}
+  //public double getLeftY(){return limiter.calculate(tune(leftStick.getY()));}
+  public double getLeftY(){
+    if(slewImposer()){
+      return limiter.calculate(tune(leftStick.getY()));
+    }else{
+      return tune(leftStick.getY());
+    }
+  }
   public double getLeftSlider(){return leftStick.getThrottle();}
 
   //right joystick
@@ -92,7 +100,14 @@ public class Drivestation extends SubsystemBase {
   public final Button rsPOVleft = new Button(()->getRightPov()==270);
 
   public double getRightX(){return tune(rightStick.getX());}
-  public double getRightY(){return limiter.calculate(tune(rightStick.getY()));}
+  //public double getRightY(){return limiter.calculate(tune(rightStick.getY()));}
+  public double getRightY(){
+    if(slewImposer()){
+      return limiter.calculate(tune(rightStick.getY()));
+    }else{
+      return tune(rightStick.getY());
+    }
+  }
   public double getRightZ(){return tune(rightStick.getZ());}
   public double getRightSlider(){return rightStick.getThrottle();}
   public int getRightPov(){return rightStick.getPOV();}

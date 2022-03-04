@@ -23,7 +23,7 @@ public class Climb2 extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     //TODO Fix
     addCommands(
-      new InstantCommand(()->{drivetrain.stop();}, drivetrain),
+      new InstantCommand(()->{drivetrain.STOP();}, drivetrain),
       new InstantCommand(()->climber.retrackBackSolenoid(), climber),
       new WaitCommand(1.8),
       new InstantCommand(()->lifter.setAngle(LifterConstants.kClimbPosition, true), lifter),

@@ -69,7 +69,7 @@ public class Drivetrain extends SubsystemBase {
   }
   
   public void setMaxOutput(double maxOutput){drive.setMaxOutput(maxOutput);}
-  public void stop(){drive.stopMotor();}
+  public void STOP(){drive.stopMotor();}
   
   public void drive(double x, double z){
     if(z==0){//inputs must be pasted through deadzone filter.

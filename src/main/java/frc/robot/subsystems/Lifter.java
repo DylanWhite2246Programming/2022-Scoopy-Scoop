@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.DoubleSupplier;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -43,6 +45,7 @@ public class Lifter extends ProfiledPIDSubsystem {
     encoder.setVelocityConversionFactor(LifterConstants.kVelConversionFactor);
     encoder.setPosition(-LifterConstants.kOffSet);
     getController().setTolerance(LifterConstants.kTolerence);
+    motor.setInverted(LifterConstants.kInverted);
   }
   //TODO change values
   private double calculateLaunchAngle(double distance){
@@ -77,14 +80,16 @@ public class Lifter extends ProfiledPIDSubsystem {
     if(isEnabled()==false){enable();}
     setGoal(angle);
   }
-  private void setMotorVoltage(double x){
-    if(toplimit.get()&&x<=0){
-      motor.setVoltage(x);
-    }else if(bottomlimit.get()&&x>=0){
-      motor.setVoltage(x);
-    }else{
-      motor.stopMotor();
-    }
+
+  public void setMotorVoltage(double x){
+    //if(toplimit.get()&&x<=0){
+    //  motor.setVoltage(x);
+    //}else if(bottomlimit.get()&&x>=0){
+    //  motor.setVoltage(x);
+    //}else{
+    //  motor.stopMotor();
+    //}
+    motor.setVoltage(x);
   }
   public void STOP(){
     disable();

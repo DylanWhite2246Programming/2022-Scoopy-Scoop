@@ -19,9 +19,10 @@ public class PowerAndPneumatics extends SubsystemBase {
   /** Creates a new Power. */
   public PowerAndPneumatics() {
     timer.start();
+    compressorOn();
   }
   public void compressorOn(){
-    pneumaticHub.enableCompressorAnalog(70,110);
+    pneumaticHub.enableCompressorAnalog(90,110);
   }
   public void compressorOff(){
     pneumaticHub.disableCompressor();

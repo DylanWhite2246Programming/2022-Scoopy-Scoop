@@ -4,26 +4,29 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.geometry.Translation2d;
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.simulation.JoystickSim;
+import frc.robot.Constants.LifterConstants;
 import frc.robot.Constants.MotorControllerValues;
 import frc.robot.Constants.Ports;
-import frc.robot.commands.Climb2;
-import frc.robot.commands.FacePose;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Lifter;
 import frc.robot.subsystems.PowerAndPneumatics;
 import frc.robot.subsystems.ScoopyScoop;
+import frc.robot.subsystems.Shooters;
 import frc.robot.subsystems.Vision;
 import frc.robot.team2246.Drivestation;
 import frc.robot.team2246.NetworktableHandeler;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.PIDCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.button.Button;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -38,24 +41,51 @@ public class RobotContainer {
   private final Lifter lift = new Lifter();
   private final PowerAndPneumatics power = new PowerAndPneumatics();
   private final ScoopyScoop scoop = new ScoopyScoop();
+  private final Shooters shooters = new Shooters();
   private final Vision vision = new Vision();
   
-  private final Drivestation controller = new Drivestation(Ports.kUSBPorts);
+  //private final Drivestation controller = new Drivestation(Ports.kUSBPorts);
   private final NetworktableHandeler tableButtons = new NetworktableHandeler();
+  private final Joystick stick = new Joystick(0);
 
+  private final RunCommand intakeForward = new RunCommand(()->{scoop.intakeIntake();}, scoop);
+  private final RunCommand intakeReverse = new RunCommand(()->{scoop.intakeReverse();}, scoop);
+  private final InstantCommand stopIntake = new InstantCommand(()->{scoop.intakeSTOP();}, scoop);
+  
+  private final RunCommand beltForward = new RunCommand(()->{scoop.rollerIntake();}, scoop);
+  private final RunCommand beltReverse = new RunCommand(()->{scoop.rollerShoot();}, scoop);
+  private final InstantCommand beltStop = new InstantCommand(()->{scoop.rollerSTOP();}, scoop);
+  
+  private final BooleanSupplier shooterReady = ()->{return shooters.atSetpoint()&&lift.getController().atSetpoint();};
+  private final RunCommand autoFeedShooter = new RunCommand(()->{scoop.autoFeedShooter(shooterReady);}, scoop);
   private final RunCommand intake = new RunCommand(()->{scoop.intakeIntake();scoop.rollerIntake();}, scoop);
+
+  private final InstantCommand startShooter = new InstantCommand(()->{shooters.shoot(MotorControllerValues.kShooterVelocity);}, shooters);
+  
+  private final InstantCommand extendArm = new InstantCommand(()->{climber.extendBackSolenoid();}, climber);
+  private final InstantCommand retrackArm = new InstantCommand(()->{climber.retrackBackSolenoid();}, climber);
+
+  //TODO change
+  private final InstantCommand startLifter = new InstantCommand(()->{lift.aim(0);}, lift);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
-    drivetrain.setDefaultCommand(
-      new RunCommand(()->drivetrain.drive(controller.getLeftY(),controller.getRightX()), drivetrain)
+    //drivetrain.setDefaultCommand(
+    //  new RunCommand(()->drivetrain.drive(controller.getLeftY(),controller.getRightX()), drivetrain)
+    //);
+    //lift.setDefaultCommand(new InstantCommand(()->{lift.setAngle(LifterConstants.kOffSet, false);}, lift));
+    //scoop.setDefaultCommand(
+    //  new InstantCommand(()->{scoop.intakeSTOP();scoop.rollerSTOP();}, scoop)
+    //);
+    //shooters.setDefaultCommand(new InstantCommand(()->{shooters.STOP();}, shooters));
+    vision.setDefaultCommand(
+      new RunCommand(()->{vision.setOveride(tableButtons.getOverideAutoPipe(), tableButtons.getManualPipe());}, vision)
     );
-    scoop.setDefaultCommand(
-        new RunCommand(()->{scoop.shooterSTOP();scoop.rollerSTOP();}, scoop)
+    lift.setDefaultCommand(
+      new RunCommand(()->{lift.setMotorVoltage(12*stick.getRawAxis(2));}, lift)
     );
-    new RunCommand(()->vision.setOveride(tableButtons.getOverideAutoPipe(), tableButtons.getManualPipe()), vision);
   }
 
   /**
@@ -65,100 +95,17 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    //Network buttons
-    //left stick
-    controller.ls0
-    .whenPressed(new RunCommand(()->drivetrain.setMaxOutput(1), drivetrain))
-    .whenReleased(new RunCommand(()->drivetrain.setMaxOutput(.75), drivetrain));
-    controller.ls1.whileActiveOnce(
-      new ParallelCommandGroup(
-        new InstantCommand(()->power.setAutoMode(true), power),
-        new InstantCommand(()->vision.setDriverMode(false), vision)
-      )
-      .andThen(intake)
-    ).whenInactive(new ParallelCommandGroup(
-      new InstantCommand(()->power.setAutoMode(false), power),
-      new InstantCommand(()->vision.setDriverMode(true), vision)
-    ));
-    //POV
-    controller.rsPOVup
-      .whenPressed(new InstantCommand(()->climber.extendBackSolenoid()));
-    controller.rsPOVup
-      .whenPressed(new InstantCommand(()->climber.retrackBackSolenoid()));
-    //rightstick
-    controller.rs0
-      .whenPressed(new RunCommand(()->drivetrain.setMaxOutput(.3), drivetrain), true)
-      .whenReleased(new RunCommand(()->drivetrain.setMaxOutput(.75), drivetrain), true);
-    controller.rs2.whileActiveOnce(
-      new FacePose(new Translation2d(0, 0), controller::getLeftY, drivetrain)
-        .alongWith(new InstantCommand(()->power.setAutoMode(true), power))
-    );
-    controller.rs3
-      .whileHeld(new PIDCommand(
-        drivetrain.getTurnController(), 
-        ()->{
-          if(vision.getResults().hasTargets()){return vision.getResults().getBestTarget().getYaw();}
-          else{return controller.getRightX();}
-        }, 
-        0.0, 
-        output->{drivetrain.computerDrive(controller.getLeftY(),output);}, 
-        drivetrain)
-          .alongWith(new ParallelCommandGroup(
-            new InstantCommand(()->power.setAutoMode(true), power),
-            new InstantCommand(()->vision.setDriverMode(false), vision)
-          )), 
-        false
-      ).whenReleased(
-        new ParallelCommandGroup(
-            new InstantCommand(()->power.setAutoMode(false), power),
-            new InstantCommand(()->vision.setDriverMode(true), vision)
-          )
-      );
-
-    //switch row 0
-    controller.s00.whileHeld(
-      new InstantCommand(
-        ()->lift.aim(
-          drivetrain.getDistanceTo(
-            new Translation2d(0, 0))), 
-        lift
-      )
-    );
-    controller.s03.whenPressed(()->climber.setSafety(true), climber);
-    //switch row 1
-    controller.s13.whileActiveContinuous(new InstantCommand(()->power.compressorOn(), power))
-      .whenInactive(new RunCommand(()->power.compressorOff(), power), true);
-    //button row 0
-    controller.b00.whileActiveOnce(new InstantCommand(()->scoop.rollerIntake(), scoop));
-    controller.b01.whileActiveOnce(new InstantCommand(()->scoop.rollerShoot(), scoop));
-    controller.b02.whileActiveContinuous(()->scoop.intakeReverse(), scoop);
-    controller.b03.whenPressed(new InstantCommand(()->climber.extendLifterSolenoid()));
-      
-    //button row 1
-    controller.b10.whileActiveContinuous(()->scoop.shooterIntake(), scoop);
-    controller.b11.whileActiveOnce(new InstantCommand(()->scoop.shoot(MotorControllerValues.kShooterVelocity), scoop));
-    controller.b12.whileActiveContinuous(()->scoop.intakeIntake(), scoop);
-    controller.b13.whenPressed(new InstantCommand(()->climber.retrackLifterSolenoid()));
-    //button row 2
-    controller.b20.whileActiveOnce(
-      new ParallelCommandGroup(
-        new InstantCommand(()->power.setAutoMode(true), power),
-        new InstantCommand(()->vision.setDriverMode(false), vision)
-      )
-      .andThen(intake)
-    ).whenInactive(new ParallelCommandGroup(
-      new InstantCommand(()->power.setAutoMode(false), power),
-      new InstantCommand(()->vision.setDriverMode(true), vision)
-    ));
-    controller.b21
-      .whileActiveOnce(
-        new InstantCommand(()->scoop.shoot(MotorControllerValues.kShooterVelocity), scoop)
-        .alongWith(new InstantCommand(()->power.setAutoMode(true), power))
-        .andThen(new RunCommand(()->scoop.autoFeedShooter(), scoop))
-      )
-      .whenInactive(new InstantCommand(()->power.setAutoMode(false), power));
-    controller.b22.whenPressed(new Climb2(climber, lift, drivetrain));
-
+    //new Button(RobotController::getUserButton)
+    //  .whenPressed(new InstantCommand(()->{climber.toggleBackSolenoid();}, climber));
+    //Network
+    //Left Stick
+    //controller.ls10.whenPressed(extendArm);
+    //controller.ls9.whenPressed(retrackArm);
+    new Button(()->{return stick.getRawButton(3);}).whenPressed(extendArm);
+    new Button(()->{return stick.getRawButton(2);}).whenPressed(retrackArm);
+    //Right Stick
+    //Switches
+    //Buttons
   }
 
   /**
