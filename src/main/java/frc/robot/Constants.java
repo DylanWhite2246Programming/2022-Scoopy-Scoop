@@ -134,8 +134,9 @@ public final class Constants {
         public static final double kDistancePerPulse = (Math.PI*2)*kWheelDiameter/kCPR;
     }
     public static final class LifterConstants{
-        public static final double kP = 0, kI = 0/*keep 0*/, kD = 0;
-        public static final double kFinalGearRatio = 25.5;
+        public static final double kP = 6.8146, kI = 0/*keep 0*/, kD = 6.8146;
+        public static final double kS = -0.0076613, kV = 4.5688, kA = 0.25766, kG = 0.6303;
+        public static final double kFinalGearRatio = 5200/22;
         /**radians */
         public static final double kConversionFactor = (2*Math.PI)/kFinalGearRatio;
         /**radians/sec */  
@@ -147,18 +148,18 @@ public final class Constants {
         /**radians */
         public static final double kClimbPosition = 0;
         /**radians */
-        public static final double kOffSet = 0; //10 degrees
+        public static final double kOffSet = -0.10713; //10 degrees
         /**radians */
         public static final double kIntakeClerence = 0;
         /**radians/sec */
-        public static final double kMaxVelocity = 0;
+        public static final double kMaxVelocity = .5;
         /**radians/sec^2 */
-        public static final double kMaxAcceleration = 0;
+        public static final double kMaxAcceleration = .16;
         /**meters */
         public static final double kClosestDistance = 0;
         /**meters */
         public static final double kMaxDistance = 0;
-        public static final boolean kInverted = false;
+        public static final boolean kInverted = true;
     }
     public static final class MotorControllerValues{
         public static final double kIntakeValue = .3;

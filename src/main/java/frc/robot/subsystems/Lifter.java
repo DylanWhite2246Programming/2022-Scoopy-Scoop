@@ -23,7 +23,12 @@ public class Lifter extends ProfiledPIDSubsystem {
   private final DigitalInput toplimit = new DigitalInput(Ports.kTopLimitPort);
   private final DigitalInput bottomlimit = new DigitalInput(Ports.kBottomLimitPort);
   //TODO find these values
-  private final ArmFeedforward feedforward = new ArmFeedforward(0, 0, 0, 0);
+  private final ArmFeedforward feedforward = new ArmFeedforward(
+    LifterConstants.kS, 
+    LifterConstants.kG, 
+    LifterConstants.kV, 
+    LifterConstants.kA
+  );
   /** Creates a new Lifter. */
   public Lifter() {
     super(
@@ -36,31 +41,31 @@ public class Lifter extends ProfiledPIDSubsystem {
         new TrapezoidProfile.Constraints(
           LifterConstants.kMaxVelocity, LifterConstants.kMaxAcceleration
         )
-      )
+      ),0
     );
     encoder=motor.getEncoder();
     encoder.setPositionConversionFactor(LifterConstants.kConversionFactor);
     encoder.setVelocityConversionFactor(LifterConstants.kVelConversionFactor);
-    encoder.setPosition(-LifterConstants.kOffSet);
+    encoder.setPosition(LifterConstants.kOffSet);
     getController().setTolerance(LifterConstants.kTolerence);
     motor.setInverted(LifterConstants.kInverted);
   }
   //TODO change values
-  private double calculateLaunchAngle(double distance){
-    //return Math.asin((distance*Constants.kG)/Math.pow(ScoopConstants.velocity,2));
-    return 0;
-  }
-  public void aim(double distance){
-    getController().setPID(
-      LifterConstants.kP, 
-      LifterConstants.kI, 
-      LifterConstants.kD
-    );
-    if(isEnabled()==false){enable();}
-    if(calculateLaunchAngle(distance)>LifterConstants.kIntakeClerence){
-      setGoal(calculateLaunchAngle(distance));
-    }
-  }
+  //private double calculateLaunchAngle(double distance){
+  //  //return Math.asin((distance*Constants.kG)/Math.pow(ScoopConstants.velocity,2));
+  //  return 0;
+  //}
+  //public void aim(double distance){
+  //  getController().setPID(
+  //    LifterConstants.kP, 
+  //    LifterConstants.kI, 
+  //    LifterConstants.kD
+  //  );
+  //  if(isEnabled()==false){enable();}
+  //  if(calculateLaunchAngle(distance)>LifterConstants.kIntakeClerence){
+  //    setGoal(calculateLaunchAngle(distance));
+  //  }
+  //}
   /**
    * @param angle angle value in radians
    */
@@ -76,7 +81,8 @@ public class Lifter extends ProfiledPIDSubsystem {
       );
     }
     if(isEnabled()==false){enable();}
-    setGoal(angle);
+    setGoal(new TrapezoidProfile.State(angle, 0));
+    //setGoal(angle);
   }
 
   public void setMotorVoltage(double x){
@@ -96,7 +102,8 @@ public class Lifter extends ProfiledPIDSubsystem {
   public boolean atSetpoint(){return getController().atSetpoint();}
   @Override
   public void useOutput(double output, TrapezoidProfile.State setpoint) {
-    setMotorVoltage(feedforward.calculate(setpoint.position, setpoint.velocity)+output);
+    double feedForward = feedforward.calculate(setpoint.position, setpoint.velocity);
+    motor.setVoltage(feedForward+output);
   }
   @Override
   public double getMeasurement() {
@@ -104,6 +111,7 @@ public class Lifter extends ProfiledPIDSubsystem {
   }
   @Override
   public void periodic(){
+    //System.out.println(getMeasurement());
     SmartDashboard.putNumber("Lift Position", getMeasurement());
     SmartDashboard.putNumber("Output Voltage", motor.getAppliedOutput());
     SmartDashboard.putBoolean("Top Limit", toplimit.get());

@@ -53,6 +53,7 @@ public class RobotContainer {
   private final NetworktableHandeler tableButtons = new NetworktableHandeler();
 
   private final XboxController ctrl = new XboxController(0);
+  private final Joystick ctrl2 = new Joystick(1);
 
   private final BooleanSupplier shooterReady = ()->{return shooters.atSetpoint()&&lift.getController().atSetpoint();};
   private final ConditionalCommand autoFeedShooters = new ConditionalCommand(belt.reverse, belt.stop, shooterReady);
@@ -68,20 +69,24 @@ public class RobotContainer {
   private final InstantCommand retrackLiftArm = new InstantCommand(()->{climber.retrackLifterSolenoid();}, climber);
 
   //TODO change
-  private final InstantCommand startLifter = new InstantCommand(()->{lift.aim(0);}, lift);
+  //private final InstantCommand startLifter = new InstantCommand(()->{lift.aim(0);}, lift);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
-    drivetrain.setDefaultCommand(
-      //new RunCommand(()->drivetrain.drive(controller.getLeftY(),controller.getRightX()), drivetrain)
-      new RunCommand(()->{drivetrain.drive(-.5*ctrl.getLeftY(), .5*ctrl.getRightX());}, drivetrain)
-    );
+    //drivetrain.setDefaultCommand(
+    //  //new RunCommand(()->drivetrain.drive(controller.getLeftY(),controller.getRightX()), drivetrain)
+    //  new RunCommand(()->{drivetrain.drive(-.5*ctrl.getLeftY(), .5*ctrl.getRightX());}, drivetrain)
+    //);
     //lift.setDefaultCommand(new InstantCommand(()->{lift.setAngle(LifterConstants.kOffSet, false);}, lift));
     //shooters.setDefaultCommand(new InstantCommand(()->{shooters.STOP();}, shooters));
-    vision.setDefaultCommand(
-      new RunCommand(()->{vision.setOveride(tableButtons.getOverideAutoPipe(), tableButtons.getManualPipe());}, vision)
+    //vision.setDefaultCommand(
+    //  new RunCommand(()->{vision.setOveride(tableButtons.getOverideAutoPipe(), tableButtons.getManualPipe());}, vision)
+    //);
+    lift.setDefaultCommand(
+      //new RunCommand(()->{lift.setMotorVoltage(12*ctrl.getLeftY());}, lift)
+      new RunCommand(()->{lift.setAngle(tableButtons.getLiftSetpoint(), false);lift.enable();}, lift)
     );
   }
 
