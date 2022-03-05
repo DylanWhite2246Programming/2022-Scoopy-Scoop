@@ -84,10 +84,10 @@ public class RobotContainer {
     //vision.setDefaultCommand(
     //  new RunCommand(()->{vision.setOveride(tableButtons.getOverideAutoPipe(), tableButtons.getManualPipe());}, vision)
     //);
-    lift.setDefaultCommand(
-      //new RunCommand(()->{lift.setMotorVoltage(12*ctrl.getLeftY());}, lift)
-      new RunCommand(()->{lift.setAngle(tableButtons.getLiftSetpoint(), false);lift.enable();}, lift)
-    );
+    //lift.setDefaultCommand(
+    //  //new RunCommand(()->{lift.setMotorVoltage(12*ctrl.getLeftY());}, lift)
+    //  //new RunCommand(()->{lift.setGoal(.7);lift.enable();}, lift)
+    //);
   }
 
   /**
@@ -101,6 +101,17 @@ public class RobotContainer {
     new Button(()->ctrl.getPOV()==90).whenPressed(extendLiftArm);
     new Button(()->ctrl.getPOV()==180).whenPressed(retrackArm);
     new Button(()->ctrl.getPOV()==270).whenPressed(retrackLiftArm);
+    new Button(ctrl::getYButton).whenPressed(
+      ()->{
+        lift.setGoal(.7);
+        lift.enable();
+      },lift
+    );
+    new Button(ctrl::getAButton).whenPressed(
+      ()->{
+        lift.STOP();
+      },lift
+    );
     //Network
     //Left Stick
     //Right Stick
