@@ -25,6 +25,7 @@ import frc.robot.team2246.Drivestation;
 import frc.robot.team2246.NetworktableHandeler;
 import frc.robot.team2246.ToggleableMotor;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -50,15 +51,21 @@ public class RobotContainer {
   
   //private final Drivestation controller = new Drivestation(Ports.kUSBPorts);
   private final NetworktableHandeler tableButtons = new NetworktableHandeler();
-  private final Joystick stick = new Joystick(0);
+
+  private final XboxController ctrl = new XboxController(0);
 
   private final BooleanSupplier shooterReady = ()->{return shooters.atSetpoint()&&lift.getController().atSetpoint();};
-  private final ParallelCommandGroup intakeBoth = new ParallelCommandGroup(intake.forward,belt.forward);
+  private final ConditionalCommand autoFeedShooters = new ConditionalCommand(belt.reverse, belt.stop, shooterReady);
+  private final ParallelCommandGroup intakeBoth = new ParallelCommandGroup(intake.forward, belt.forward);
 
   private final InstantCommand startShooter = new InstantCommand(()->{shooters.shoot(MotorControllerValues.kShooterVelocity);}, shooters);
-  
+  private final InstantCommand stopShooter = new InstantCommand(()->{shooters.STOP();}, shooters);
+
   private final InstantCommand extendArm = new InstantCommand(()->{climber.extendBackSolenoid();}, climber);
   private final InstantCommand retrackArm = new InstantCommand(()->{climber.retrackBackSolenoid();}, climber);
+
+  private final InstantCommand extendLiftArm = new InstantCommand(()->{climber.extendLifterSolenoid();}, climber);
+  private final InstantCommand retrackLiftArm = new InstantCommand(()->{climber.retrackLifterSolenoid();}, climber);
 
   //TODO change
   private final InstantCommand startLifter = new InstantCommand(()->{lift.aim(0);}, lift);
@@ -67,19 +74,14 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
-    //drivetrain.setDefaultCommand(
-    //  new RunCommand(()->drivetrain.drive(controller.getLeftY(),controller.getRightX()), drivetrain)
-    //);
+    drivetrain.setDefaultCommand(
+      //new RunCommand(()->drivetrain.drive(controller.getLeftY(),controller.getRightX()), drivetrain)
+      new RunCommand(()->{drivetrain.drive(-.5*ctrl.getLeftY(), .5*ctrl.getRightX());}, drivetrain)
+    );
     //lift.setDefaultCommand(new InstantCommand(()->{lift.setAngle(LifterConstants.kOffSet, false);}, lift));
-    //scoop.setDefaultCommand(
-    //  new InstantCommand(()->{scoop.intakeSTOP();scoop.rollerSTOP();}, scoop)
-    //);
     //shooters.setDefaultCommand(new InstantCommand(()->{shooters.STOP();}, shooters));
     vision.setDefaultCommand(
       new RunCommand(()->{vision.setOveride(tableButtons.getOverideAutoPipe(), tableButtons.getManualPipe());}, vision)
-    );
-    lift.setDefaultCommand(
-      new RunCommand(()->{lift.setMotorVoltage(12*stick.getRawAxis(2));}, lift)
     );
   }
 
@@ -90,14 +92,12 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    //new Button(RobotController::getUserButton)
-    //  .whenPressed(new InstantCommand(()->{climber.toggleBackSolenoid();}, climber));
+    new Button(()->ctrl.getPOV()==0).whenPressed(extendArm);
+    new Button(()->ctrl.getPOV()==90).whenPressed(extendLiftArm);
+    new Button(()->ctrl.getPOV()==180).whenPressed(retrackArm);
+    new Button(()->ctrl.getPOV()==270).whenPressed(retrackLiftArm);
     //Network
     //Left Stick
-    //controller.ls10.whenPressed(extendArm);
-    //controller.ls9.whenPressed(retrackArm);
-    new Button(()->{return stick.getRawButton(3);}).whenPressed(extendArm);
-    new Button(()->{return stick.getRawButton(2);}).whenPressed(retrackArm);
     //Right Stick
     //Switches
     //Buttons

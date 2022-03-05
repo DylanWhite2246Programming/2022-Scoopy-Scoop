@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems;
 
-import java.util.function.DoubleSupplier;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -95,7 +93,7 @@ public class Lifter extends ProfiledPIDSubsystem {
     disable();
     motor.stopMotor();
   }
-
+  public boolean atSetpoint(){return getController().atSetpoint();}
   @Override
   public void useOutput(double output, TrapezoidProfile.State setpoint) {
     setMotorVoltage(feedforward.calculate(setpoint.position, setpoint.velocity)+output);

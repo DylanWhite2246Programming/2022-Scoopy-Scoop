@@ -72,9 +72,10 @@ public class Drivetrain extends SubsystemBase {
   public void STOP(){drive.stopMotor();}
   
   public void drive(double x, double z){
-    if(z==0){//inputs must be pasted through deadzone filter.
-      drive.arcadeDrive(x, controller.calculate(getChassisSpeed().omegaRadiansPerSecond), false);
-    }else{drive.arcadeDrive(x, z, false);}
+    //if(z==0){//inputs must be pasted through deadzone filter.
+    //  drive.arcadeDrive(x, controller.calculate(getChassisSpeed().omegaRadiansPerSecond), false);
+    //}else{}
+    drive.arcadeDrive(x, z, false);
   }
   public void computerDrive(double x, double z){
     drive.arcadeDrive(x, z, false);

@@ -50,7 +50,8 @@ public class Climber extends SubsystemBase {
   }
 
   public void extendLifterSolenoid(){
-    if(safety)lifterSolenoid.set(Value.kForward);
+    //if(safety)lifterSolenoid.set(Value.kForward);
+    lifterSolenoid.set(Value.kForward);
   }
   public void retrackLifterSolenoid(){
     lifterSolenoid.set(Value.kReverse);
