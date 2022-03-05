@@ -41,7 +41,7 @@ public class Lifter extends ProfiledPIDSubsystem {
         new TrapezoidProfile.Constraints(
           LifterConstants.kMaxVelocity, LifterConstants.kMaxAcceleration
         )
-      ),0
+      ),LifterConstants.kOffSet
     );
     encoder=motor.getEncoder();
     encoder.setPositionConversionFactor(LifterConstants.kConversionFactor);
