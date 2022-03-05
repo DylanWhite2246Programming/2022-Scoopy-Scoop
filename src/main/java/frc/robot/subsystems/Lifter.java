@@ -100,6 +100,7 @@ public class Lifter extends ProfiledPIDSubsystem {
     motor.stopMotor();
   }
   public boolean atSetpoint(){return getController().atSetpoint();}
+  
   @Override
   public void useOutput(double output, TrapezoidProfile.State setpoint) {
     double feedForward = feedforward.calculate(setpoint.position, setpoint.velocity);
@@ -113,9 +114,11 @@ public class Lifter extends ProfiledPIDSubsystem {
   }
   @Override
   public void periodic(){
+    super.periodic();
     //System.out.println(getMeasurement());
     SmartDashboard.putNumber("Lift Position", getMeasurement());
     SmartDashboard.putNumber("Output Voltage", motor.getAppliedOutput());
+    SmartDashboard.putNumber("Setpoint", getController().getSetpoint().position);
     SmartDashboard.putBoolean("Top Limit", toplimit.get());
     SmartDashboard.putBoolean("Bottom Limit", bottomlimit.get());
     SmartDashboard.putBoolean("At Goal", getController().atGoal());
