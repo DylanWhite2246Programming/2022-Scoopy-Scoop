@@ -81,7 +81,7 @@ public class Lifter extends ProfiledPIDSubsystem {
       );
     }
     if(isEnabled()==false){enable();}
-    setGoal(new TrapezoidProfile.State(angle, 0));
+    setGoal(angle);
     //setGoal(angle);
   }
 
