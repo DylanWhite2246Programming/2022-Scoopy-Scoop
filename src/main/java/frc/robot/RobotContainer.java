@@ -101,13 +101,13 @@ public class RobotContainer {
     new Button(()->ctrl.getPOV()==90).whenPressed(extendLiftArm);
     new Button(()->ctrl.getPOV()==180).whenPressed(retrackArm);
     new Button(()->ctrl.getPOV()==270).whenPressed(retrackLiftArm);
-    new Button(ctrl::getYButton).whenPressed(
+    new Button(()->ctrl.getRawButton(2)).whenPressed(
       ()->{
-        lift.setGoal(.7);
         lift.enable();
+        lift.setGoal(.7);
       },lift
     );
-    new Button(ctrl::getAButton).whenPressed(
+    new Button(()->ctrl.getRawButton(1)).whenPressed(
       ()->{
         lift.STOP();
       },lift

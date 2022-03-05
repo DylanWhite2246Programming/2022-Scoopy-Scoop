@@ -104,6 +104,8 @@ public class Lifter extends ProfiledPIDSubsystem {
   public void useOutput(double output, TrapezoidProfile.State setpoint) {
     double feedForward = feedforward.calculate(setpoint.position, setpoint.velocity);
     motor.setVoltage(feedForward+output);
+    System.out.println("Test");
+    System.out.println(feedforward);
   }
   @Override
   public double getMeasurement() {

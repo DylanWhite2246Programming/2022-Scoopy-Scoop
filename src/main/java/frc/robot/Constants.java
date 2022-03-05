@@ -142,7 +142,7 @@ public final class Constants {
         /**radians/sec */  
         public static final double kVelConversionFactor = kConversionFactor/60;
         /**radians */
-        public static final double kTolerence = .002;
+        public static final double kTolerence = .02;
         /**radians*/
         public static final double kSecondClimbingPosition = 0;
         /**radians */
