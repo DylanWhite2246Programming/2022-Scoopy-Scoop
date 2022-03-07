@@ -110,11 +110,11 @@ public final class Constants {
         //chassis stuff
         public static final double kTrackWidth = 0;
         /**meters */
-        public static final double kWheelDiameter = 7.94/39.37;
+        public static final double kWheelDiameter = 6/39.37;
         /**meters */
         public static final double kWheelCircumfrence = Math.PI*kWheelDiameter;
         //encoder stuff
-        public static final double kDistancePerRotation = kWheelCircumfrence/12.75; //12.75 gearing
+        public static final double kDistancePerRotation = kWheelCircumfrence/10.71; //12.75 gearing
         public static final boolean kRightInverted = true;
         public static final boolean kLeftInverted = false;
         public static final DifferentialDriveKinematics KINEMATICS 

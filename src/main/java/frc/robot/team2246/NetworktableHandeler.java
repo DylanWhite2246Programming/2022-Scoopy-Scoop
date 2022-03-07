@@ -8,7 +8,6 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.WidgetType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LifterConstants;
 
@@ -42,6 +41,7 @@ public class NetworktableHandeler extends SubsystemBase {
 
   @Override
   public void periodic() {
+    Shuffleboard.update();
     //System.out.println(getLiftSetpoint());
     // This method will be called once per scheduler run
   }
