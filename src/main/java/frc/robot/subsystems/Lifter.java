@@ -20,9 +20,10 @@ import frc.robot.Constants.Ports;
 public class Lifter extends ProfiledPIDSubsystem {
   private final DutyCycleEncoder encoder = new DutyCycleEncoder(Ports.kLifterEncoderPort);
   private final CANSparkMax motor = new CANSparkMax(Ports.kLifterCANID, MotorType.kBrushless);
+
   private final DigitalInput toplimit = new DigitalInput(Ports.kTopLimitPort);
   private final DigitalInput bottomlimit = new DigitalInput(Ports.kBottomLimitPort);
-  //TODO find these values
+
   private final ArmFeedforward feedforward = new ArmFeedforward(
     LifterConstants.kS, 
     LifterConstants.kG, 
@@ -49,39 +50,6 @@ public class Lifter extends ProfiledPIDSubsystem {
     motor.setInverted(LifterConstants.kInverted);
   }
   //TODO change values
-  //private double calculateLaunchAngle(double distance){
-  //  //return Math.asin((distance*Constants.kG)/Math.pow(ScoopConstants.velocity,2));
-  //  return 0;
-  //}
-  //public void aim(double distance){
-  //  getController().setPID(
-  //    LifterConstants.kP, 
-  //    LifterConstants.kI, 
-  //    LifterConstants.kD
-  //  );
-  //  if(isEnabled()==false){enable();}
-  //  if(calculateLaunchAngle(distance)>LifterConstants.kIntakeClerence){
-  //    setGoal(calculateLaunchAngle(distance));
-  //  }
-  //}
-  /**
-   * @param angle angle value in radians
-   */
-  public void setAngle(double angle, boolean climbing){
-    if(climbing){
-      //TODO CHANGE
-      getController().setPID(0, 0, 0);
-    }else{
-      getController().setPID(
-        LifterConstants.kP, 
-        LifterConstants.kI, 
-        LifterConstants.kD
-      );
-    }
-    if(isEnabled()==false){enable();}
-    setGoal(angle);
-    //setGoal(angle);
-  }
 
   public void setMotorVoltage(double x){
     //if(toplimit.get()&&x<=0){

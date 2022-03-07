@@ -26,7 +26,7 @@ public class Climb2 extends SequentialCommandGroup {
       new InstantCommand(()->{drivetrain.STOP();}, drivetrain),
       new InstantCommand(()->climber.retrackBackSolenoid(), climber),
       new WaitCommand(1.8),
-      new InstantCommand(()->lifter.setAngle(LifterConstants.kClimbPosition, true), lifter),
+      new InstantCommand(()->lifter.setGoal(LifterConstants.kClimbPosition), lifter),
       new WaitUntilCommand(lifter.getController()::atGoal),
       new InstantCommand(()->climber.extendLifterSolenoid(), climber),
       new WaitCommand(.5),
