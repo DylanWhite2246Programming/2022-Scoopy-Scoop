@@ -5,20 +5,20 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import frc.robot.Constants.LifterConstants;
 import frc.robot.Constants.Ports;
 
 public class Lifter extends ProfiledPIDSubsystem {
-  private RelativeEncoder encoder;
+  private final DutyCycleEncoder encoder = new DutyCycleEncoder(Ports.kLifterEncoderPort);
   private final CANSparkMax motor = new CANSparkMax(Ports.kLifterCANID, MotorType.kBrushless);
   private final DigitalInput toplimit = new DigitalInput(Ports.kTopLimitPort);
   private final DigitalInput bottomlimit = new DigitalInput(Ports.kBottomLimitPort);
@@ -43,10 +43,8 @@ public class Lifter extends ProfiledPIDSubsystem {
         )
       ),LifterConstants.kOffSet
     );
-    encoder=motor.getEncoder();
-    encoder.setPositionConversionFactor(LifterConstants.kConversionFactor);
-    encoder.setVelocityConversionFactor(LifterConstants.kVelConversionFactor);
-    encoder.setPosition(LifterConstants.kOffSet);
+    encoder.setDistancePerRotation(2*Math.PI);
+    encoder.reset();
     getController().setTolerance(LifterConstants.kTolerence);
     motor.setInverted(LifterConstants.kInverted);
   }
@@ -105,12 +103,12 @@ public class Lifter extends ProfiledPIDSubsystem {
   public void useOutput(double output, TrapezoidProfile.State setpoint) {
     double feedForward = feedforward.calculate(setpoint.position, setpoint.velocity);
     motor.setVoltage(feedForward+output);
-    System.out.println("Test");
-    System.out.println(feedforward);
+    //System.out.println("Test");
+    //System.out.println(feedforward);
   }
   @Override
   public double getMeasurement() {
-    return encoder.getPosition();
+    return encoder.getDistance()-.423+LifterConstants.kOffSet;
   }
   @Override
   public void periodic(){

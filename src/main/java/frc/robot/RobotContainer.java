@@ -53,7 +53,6 @@ public class RobotContainer {
   private final NetworktableHandeler tableButtons = new NetworktableHandeler();
 
   private final XboxController ctrl = new XboxController(0);
-  private final Joystick ctrl2 = new Joystick(1);
 
   private final BooleanSupplier shooterReady = ()->{return shooters.atSetpoint()&&lift.getController().atSetpoint();};
   private final ConditionalCommand autoFeedShooters = new ConditionalCommand(belt.reverse, belt.stop, shooterReady);
@@ -101,10 +100,11 @@ public class RobotContainer {
     new Button(()->ctrl.getPOV()==90).whenPressed(extendLiftArm);
     new Button(()->ctrl.getPOV()==180).whenPressed(retrackArm);
     new Button(()->ctrl.getPOV()==270).whenPressed(retrackLiftArm);
+    
     new Button(()->ctrl.getRawButton(2)).whenPressed(
       ()->{
         lift.enable();
-        lift.setGoal(.7);
+        lift.setGoal(.79);
       },lift
     );
     new Button(()->ctrl.getRawButton(1)).whenPressed(

@@ -53,9 +53,10 @@ public final class Constants {
         //DIO might be unnessisary
         public static final int[] kLeftShooterEncoderPorts = new int[]{0,1};
         public static final int[] kRightShooterEncoderPorts = new int[]{2,3};
-        public static final int kBottomLimitPort = 4;
-        public static final int kTopLimitPort = 5;
-        public static final int kBallSensorPort = 6;
+        public static final int kLifterEncoderPort = 4;
+        public static final int kBottomLimitPort = 5;
+        public static final int kTopLimitPort = 6;
+        public static final int kBallSensorPort = 7;
         //Robot USB //no
         //Controller Ports
         public static final int[] kUSBPorts = new int[]{0,1,2,3};
@@ -138,17 +139,13 @@ public final class Constants {
         public static final double kS = -0.0076613, kV = 4.5688, kA = 0.25766, kG = 0.6303;
         public static final double kFinalGearRatio = 5200/22;
         /**radians */
-        public static final double kConversionFactor = (2*Math.PI)/kFinalGearRatio;
-        /**radians/sec */  
-        public static final double kVelConversionFactor = kConversionFactor/60;
-        /**radians */
-        public static final double kTolerence = .02;
+        public static final double kTolerence = .1;
         /**radians*/
         public static final double kSecondClimbingPosition = 0;
         /**radians */
         public static final double kClimbPosition = 0;
         /**radians */
-        public static final double kOffSet = -0.10713; //10 degrees
+        public static final double kOffSet = -0.151; //10 degrees
         /**radians */
         public static final double kIntakeClerence = 0;
         /**radians/sec */
