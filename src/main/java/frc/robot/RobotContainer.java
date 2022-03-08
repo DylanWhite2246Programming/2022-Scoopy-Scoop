@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.simulation.JoystickSim;
 import frc.robot.Constants.LifterConstants;
 import frc.robot.Constants.MotorControllerValues;
 import frc.robot.Constants.Ports;
+import frc.robot.commands.AlignToBall;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Lifter;
@@ -66,6 +67,8 @@ public class RobotContainer {
 
   private final InstantCommand extendLiftArm = new InstantCommand(()->{climber.extendLifterSolenoid();}, climber);
   private final InstantCommand retrackLiftArm = new InstantCommand(()->{climber.retrackLifterSolenoid();}, climber);
+  //TODO add magnatude supplier
+  //private final AlignToBall alignToBall = new AlignToBall(drivetrain, ()->0, vision.getResults().getBestTarget()::getYaw);
 
   //TODO change
   //private final InstantCommand startLifter = new InstantCommand(()->{lift.aim(0);}, lift);

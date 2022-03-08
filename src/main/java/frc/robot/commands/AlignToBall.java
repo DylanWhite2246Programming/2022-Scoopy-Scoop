@@ -13,21 +13,20 @@ import frc.robot.subsystems.Drivetrain;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class MoveToAngle extends PIDCommand {
-  /** Creates a new FaceAngle. */
-  public MoveToAngle(double angleRad, DoubleSupplier x, Drivetrain drivetrain) {
+public class AlignToBall extends PIDCommand {
+  /** Creates a new AlignToBall. */
+  public AlignToBall(Drivetrain drivetrain, DoubleSupplier magnitude, DoubleSupplier yaw) {
     super(
-      // The controller that the command will use
-      new PIDController(0, 0, 0),
-      // This should return the measurement
-      drivetrain::getAbsoluteHeading,
-      // This should return the setpoint (can also be a constant)
-      angleRad,
-      // This uses the output
-      output -> {
-        drivetrain.computerDrive(x.getAsDouble(), output);
-      });
-    addRequirements(drivetrain);
+        // The controller that the command will use
+        drivetrain.getTurnController(),
+        // This should return the measurement
+        yaw,
+        // This should return the setpoint (can also be a constant)
+        () -> 0,
+        // This uses the output
+        output -> {
+          drivetrain.computerDrive(magnitude.getAsDouble(), output);
+        });
     // Use addRequirements() here to declare subsystem dependencies.
     // Configure additional PID options by calling `getController` here.
   }
@@ -35,6 +34,6 @@ public class MoveToAngle extends PIDCommand {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return getController().atSetpoint();
+    return false;
   }
 }

@@ -136,7 +136,7 @@ public final class Constants {
     }
     public static final class LifterConstants{
         public static final double kP = 6.8146, kI = 0/*keep 0*/, kD = 6.8146;
-        public static final double kS = -0.0076613, kV = 4.5688, kA = 0.25766, kG = 0.6303;
+        public static final double kS = 0.0076613, kV = 4.5688, kA = 0.25766, kG = 0.6303;
         public static final double kFinalGearRatio = 5200/22;
         /**radians */
         public static final double kTolerence = .1;
