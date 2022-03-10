@@ -123,10 +123,10 @@ public final class Constants {
     }
     public static final class ScoopConstants{
         public static final boolean kLeftEncoderReversed = false;
-        public static final boolean kRightEncoderReversed = false;
-        public static final boolean kLeftMotorInverted = false;
+        public static final boolean kRightEncoderReversed = true;
+        public static final boolean kLeftMotorInverted = true;
         public static final boolean kRightMotorInverted = false;
-        public static final boolean kRollerInversed = false;
+        public static final boolean kRollerInversed = true;
         public static final boolean kIntakeInversed = false;
         //METERS
         public static final double kWheelDiameter = 6/39.37;
@@ -135,9 +135,8 @@ public final class Constants {
         public static final double kDistancePerPulse = (Math.PI*2)*kWheelDiameter/kCPR;
     }
     public static final class LifterConstants{
-        public static final double kP = 6.8146, kI = 0/*keep 0*/, kD = 6.8146;
-        public static final double kS = 0.0076613, kV = 4.5688, kA = 0.25766, kG = 0.6303;
-        public static final double kFinalGearRatio = 5200/22;
+        public static final double kP = .63172, kI = 0/*keep 0*/, kD = 0;
+        public static final double kS = 0.010889, kV = 4.5699, kA = 1.1728, kG = 0.64846;
         /**radians */
         public static final double kTolerence = .1;
         /**radians*/
@@ -145,13 +144,13 @@ public final class Constants {
         /**radians */
         public static final double kClimbPosition = 0;
         /**radians */
-        public static final double kOffSet = -0.151; //10 degrees
+        public static final double kOffSet = -.57;
         /**radians */
         public static final double kIntakeClerence = 0;
         /**radians/sec */
-        public static final double kMaxVelocity = .5;
+        public static final double kMaxVelocity = 1;
         /**radians/sec^2 */
-        public static final double kMaxAcceleration = .16;
+        public static final double kMaxAcceleration = .64;
         /**meters */
         public static final double kClosestDistance = 0;
         /**meters */
@@ -159,9 +158,8 @@ public final class Constants {
         public static final boolean kInverted = true;
     }
     public static final class MotorControllerValues{
-        public static final double kIntakeValue = .3;
-        public static final double kRollerValues = .25;
-        public static final double kClimbSpeed = .75;
+        public static final double kIntakeValue = .65;
+        public static final double kShooterIntakeValue = .215;
         /**meters per second */
         public static final double kShooterVelocity = 10;
     }
