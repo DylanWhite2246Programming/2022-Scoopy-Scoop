@@ -76,7 +76,7 @@ public class Lifter extends ProfiledPIDSubsystem {
   }
   @Override
   public double getMeasurement() {
-    return encoder.getDistance()-.423+LifterConstants.kOffSet;
+    return encoder.getDistance()+LifterConstants.kOffSet;
   }
   @Override
   public void periodic(){

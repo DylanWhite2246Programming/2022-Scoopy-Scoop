@@ -44,8 +44,6 @@ public class Shooters extends SubsystemBase {
   public Shooters() {
     leftEncoder.setDistancePerPulse(ScoopConstants.kDistancePerPulse);
     rightEncoder.setDistancePerPulse(ScoopConstants.kDistancePerPulse);
-    leftEncoder.setReverseDirection(ScoopConstants.kLeftEncoderReversed);
-    rightEncoder.setReverseDirection(ScoopConstants.kRightEncoderReversed);
     leftShooter.setInverted(ScoopConstants.kLeftMotorInverted);
     rightShooter.setInverted(ScoopConstants.kRightMotorInverted);
   }
@@ -83,8 +81,8 @@ public class Shooters extends SubsystemBase {
     shoot(0);
   }
   public void intake(){
-    leftShooter.set(-MotorControllerValues.kIntakeValue);
-    rightShooter.set(-MotorControllerValues.kIntakeValue);
+    leftShooter.set(MotorControllerValues.kShooterIntakeValue);
+    rightShooter.set(MotorControllerValues.kShooterIntakeValue);
   }
 
   @Override

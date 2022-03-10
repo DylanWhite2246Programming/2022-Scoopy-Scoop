@@ -18,13 +18,13 @@ import frc.robot.Constants.Ports;
 import frc.robot.commands.AlignToBall;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Lifter;
 import frc.robot.subsystems.PowerAndPneumatics;
 import frc.robot.subsystems.Shooters;
 import frc.robot.subsystems.Vision;
 import frc.robot.team2246.Drivestation;
 import frc.robot.team2246.NetworktableHandeler;
-import frc.robot.team2246.ToggleableMotor;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -42,22 +42,22 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Climber climber = new Climber();
   private final Drivetrain drivetrain = new Drivetrain();
+  private final Indexer indexer = new Indexer();
   private final Lifter lift = new Lifter();
   private final PowerAndPneumatics power = new PowerAndPneumatics();
   private final Shooters shooters = new Shooters();
   private final Vision vision = new Vision();
 
-  private final ToggleableMotor intake = new ToggleableMotor(Ports.kIntakeCANID, MotorControllerValues.kIntakeValue);
-  private final ToggleableMotor belt = new ToggleableMotor(Ports.kBeltCANID, 1);
   
   //private final Drivestation controller = new Drivestation(Ports.kUSBPorts);
   private final NetworktableHandeler tableButtons = new NetworktableHandeler();
 
-  private final XboxController ctrl = new XboxController(0);
+  private final Joystick left = new Joystick(0);
+  private final Joystick right = new Joystick(1);
 
   private final BooleanSupplier shooterReady = ()->{return shooters.atSetpoint()&&lift.getController().atSetpoint();};
-  private final ConditionalCommand autoFeedShooters = new ConditionalCommand(belt.reverse, belt.stop, shooterReady);
-  private final ParallelCommandGroup intakeBoth = new ParallelCommandGroup(intake.forward, belt.forward);
+  //private final ConditionalCommand autoFeedShooters = new ConditionalCommand(belt.reverse, belt.stop, shooterReady);
+  //private final ParallelCommandGroup intakeBoth = new ParallelCommandGroup(intake.forward, belt.forward);
 
   private final InstantCommand startShooter = new InstantCommand(()->{shooters.shoot(MotorControllerValues.kShooterVelocity);}, shooters);
   private final InstantCommand stopShooter = new InstantCommand(()->{shooters.STOP();}, shooters);
@@ -77,10 +77,10 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
-    //drivetrain.setDefaultCommand(
-    //  //new RunCommand(()->drivetrain.drive(controller.getLeftY(),controller.getRightX()), drivetrain)
-    //  new RunCommand(()->{drivetrain.drive(-.5*ctrl.getLeftY(), .5*ctrl.getRightX());}, drivetrain)
-    //);
+      //drivetrain.setDefaultCommand(
+      //  //new RunCommand(()->drivetrain.drive(controller.getLeftY(),controller.getRightX()), drivetrain)
+      //  new RunCommand(()->{drivetrain.drive(.6*left.getY(), .45*right.getX());}, drivetrain)
+      //);
     //lift.setDefaultCommand(new InstantCommand(()->{lift.setAngle(LifterConstants.kOffSet, false);}, lift));
     //shooters.setDefaultCommand(new InstantCommand(()->{shooters.STOP();}, shooters));
     //vision.setDefaultCommand(
@@ -99,21 +99,76 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    new Button(()->ctrl.getPOV()==0).whenPressed(extendArm);
-    new Button(()->ctrl.getPOV()==90).whenPressed(extendLiftArm);
-    new Button(()->ctrl.getPOV()==180).whenPressed(retrackArm);
-    new Button(()->ctrl.getPOV()==270).whenPressed(retrackLiftArm);
+    new Button(()->right.getPOV()==0).whenPressed(extendArm);
+    new Button(()->right.getPOV()==90).whenPressed(extendLiftArm);
+    new Button(()->right.getPOV()==180).whenPressed(retrackArm);
+    new Button(()->right.getPOV()==270).whenPressed(retrackLiftArm);
     
-    new Button(()->ctrl.getRawButton(2)).whenPressed(
+    new Button(()->right.getRawButton(8)).whenPressed(
       ()->{
         lift.enable();
-        lift.setGoal(.79);
+        lift.setGoal(.7);
       },lift
     );
-    new Button(()->ctrl.getRawButton(1)).whenPressed(
+    new Button(()->right.getRawButton(10)).whenPressed(
+      ()->{
+        lift.setGoal(LifterConstants.kOffSet);
+      },lift
+    );
+    new Button(()->right.getRawButton(12)).whenPressed(
       ()->{
         lift.STOP();
       },lift
+    );
+    new Button(()->right.getRawButton(11)).whenPressed(
+      ()->{indexer.beltReverse();}
+    ).whenReleased(
+      ()->{indexer.beltSTOP();}
+    );
+    new Button(()->right.getRawButton(7)).whenPressed(
+      ()->{
+        shooters.shoot(-12);
+      },shooters
+    );
+    new Button(()->right.getRawButton(9)).whenPressed(
+      ()->{
+        shooters.STOP();
+      },shooters
+    );
+    new Button(()->left.getRawButton(2)).whenPressed(
+      new ParallelCommandGroup(
+        new RunCommand(()->{
+            indexer.intakeForward();
+            indexer.beltForward();
+          },indexer
+        ),new RunCommand(
+          ()->{
+            shooters.intake();
+          },shooters
+        )
+      )
+      
+    ).whenReleased(
+      new ParallelCommandGroup(
+        new RunCommand(()->{
+            indexer.beltSTOP();;
+            indexer.intakeSTOP();
+          },indexer
+        ),new RunCommand(
+          ()->{
+            shooters.STOP();
+          },shooters
+        )
+      )
+    );
+    new Button(()->left.getRawButton(3)).whenPressed(
+      ()->{
+        indexer.intakeReverse();
+      },indexer
+    ).whenReleased(
+      ()->{
+        indexer.intakeSTOP();
+      }
     );
     //Network
     //Left Stick
