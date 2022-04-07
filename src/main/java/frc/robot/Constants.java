@@ -159,7 +159,7 @@ public final class Constants {
     }
     public static final class MotorControllerValues{
         public static final double kIntakeValue = .9;
-        public static final double kShooterIntakeValue = .55;
+        public static final double kShooterIntakeValue = .55*12;
         /**meters per second */
         public static final double kShooterVelocity = 7.75;
     }
