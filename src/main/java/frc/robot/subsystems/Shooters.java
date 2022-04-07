@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Ports;
 import frc.robot.Constants.ScoopConstants;
-import frc.robot.Constants.MotorControllerValues;
 
 public class Shooters extends SubsystemBase {
   private final WPI_VictorSPX leftShooter = new WPI_VictorSPX(Ports.kLeftShooterCANID);
