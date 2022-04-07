@@ -58,6 +58,7 @@ public class RobotContainer {
 
   private final InstantCommand scoopUp = new InstantCommand(()->power.scoopUp(), power);
   private final InstantCommand scoopDown = new InstantCommand(()->power.scoopDown(), power);
+  
   private final InstantCommand climbUp = new InstantCommand(()->power.climberUp(), power);
   private final InstantCommand climbDown = new InstantCommand(()->power.climbDown(), power);
 
