@@ -49,7 +49,7 @@ public final class Constants {
             public static final int kIntakeCANID = 11;
         //PH ports
         public static final int[] climber1Ports = new int[]{12,13};
-        public static final int[] climber2Ports = new int[]{14,15};
+        public static final int[] climber2Ports = new int[]{15,14};
         //DIO might be unnessisary
         public static final int[] kLeftShooterEncoderPorts = new int[]{0,1};
         public static final int[] kRightShooterEncoderPorts = new int[]{2,3};
@@ -124,7 +124,7 @@ public final class Constants {
     public static final class ScoopConstants{
         public static final boolean kLeftEncoderReversed = false;
         public static final boolean kRightEncoderReversed = true;
-        public static final boolean kLeftMotorInverted = true;
+        public static final boolean kLeftMotorInverted = false;
         public static final boolean kRightMotorInverted = false;
         public static final boolean kRollerInversed = true;
         public static final boolean kIntakeInversed = false;
@@ -155,11 +155,11 @@ public final class Constants {
         public static final double kClosestDistance = 0;
         /**meters */
         public static final double kMaxDistance = 0;
-        public static final boolean kInverted = true;
+        public static final boolean kInverted = false;
     }
     public static final class MotorControllerValues{
-        public static final double kIntakeValue = .65;
-        public static final double kShooterIntakeValue = .215;
+        public static final double kIntakeValue = .9;
+        public static final double kShooterIntakeValue = .55;
         /**meters per second */
         public static final double kShooterVelocity = 10;
     }

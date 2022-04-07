@@ -33,7 +33,9 @@ public class Climber extends SubsystemBase {
   /** Creates a new Climber. */
   public Climber() {
     retrackLifterSolenoid();
-    retrackBackSolenoid();
+    //extendLifterSolenoid();
+    //retrackBackSolenoid();
+    extendBackSolenoid();
   }
 
   public void setSafety(boolean value){safety=value;}

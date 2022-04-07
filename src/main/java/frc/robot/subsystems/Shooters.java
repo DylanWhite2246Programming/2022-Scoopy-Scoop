@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Ports;
 import frc.robot.Constants.ScoopConstants;
@@ -72,6 +73,10 @@ public class Shooters extends SubsystemBase {
         +rightPid.calculate(getRightVelocity(), setpoint)
     );
   }
+  public void setVolts(double volts){
+    leftShooter.setVoltage(volts);
+    rightShooter.setVoltage(volts);
+  }
   public boolean atSetpoint(){
     return leftPid.atSetpoint()&&rightPid.atSetpoint();
   }
@@ -81,12 +86,17 @@ public class Shooters extends SubsystemBase {
     shoot(0);
   }
   public void intake(){
-    leftShooter.set(MotorControllerValues.kShooterIntakeValue);
-    rightShooter.set(MotorControllerValues.kShooterIntakeValue);
+    setVolts(6);
+    //leftShooter.set(MotorControllerValues.kShooterIntakeValue);
+    //rightShooter.set(MotorControllerValues.kShooterIntakeValue);
   }
 
   @Override
   public void periodic() {
+    SmartDashboard.putNumber("Left Shooter Vel", getLeftVelocity());
+    SmartDashboard.putNumber("Left Volts", leftShooter.getMotorOutputVoltage());
+    SmartDashboard.putNumber("Right Shooter Vel", getRightVelocity());
+    SmartDashboard.putNumber("Right Volts", rightShooter.getMotorOutputVoltage());
     // This method will be called once per scheduler run
   }
 }

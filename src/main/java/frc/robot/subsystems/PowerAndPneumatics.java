@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.Ports;
 
@@ -19,10 +20,11 @@ public class PowerAndPneumatics extends SubsystemBase {
   /** Creates a new Power. */
   public PowerAndPneumatics() {
     timer.start();
-    compressorOn();
+    //compressorOn();
+    compressorOff();
   }
   public void compressorOn(){
-    pneumaticHub.enableCompressorAnalog(90,110);
+    pneumaticHub.enableCompressorAnalog(90,115);
   }
   public void compressorOff(){
     pneumaticHub.disableCompressor();
@@ -58,5 +60,6 @@ public class PowerAndPneumatics extends SubsystemBase {
     else{
       setSwitchableChannel(Math.floor(timer.get())%2==0); //blinks the lights
     }
+    SmartDashboard.putNumber("Pressure", pneumaticHub.getPressure(0));
   }
 }

@@ -29,6 +29,11 @@ public class Indexer extends SubsystemBase {
   public void intakeReverse(){intake.set(-MotorControllerValues.kIntakeValue);}
   public void intakeSTOP(){intake.stopMotor();}
 
+  public void VOMIT(){
+    beltReverse();
+    intakeReverse();
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

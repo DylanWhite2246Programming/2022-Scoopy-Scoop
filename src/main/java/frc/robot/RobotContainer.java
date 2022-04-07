@@ -6,6 +6,7 @@ package frc.robot;
 
 import java.util.function.BooleanSupplier;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.RobotController;
@@ -19,7 +20,6 @@ import frc.robot.commands.AlignToBall;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Lifter;
 import frc.robot.subsystems.PowerAndPneumatics;
 import frc.robot.subsystems.Shooters;
 import frc.robot.subsystems.Vision;
@@ -30,6 +30,8 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
 
 /**
@@ -39,11 +41,13 @@ import edu.wpi.first.wpilibj2.command.button.Button;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+  private final SlewRateLimiter leftlimiter = new SlewRateLimiter(.75);
+  private final SlewRateLimiter rightlimiter = new SlewRateLimiter(1.2);
+  
   // The robot's subsystems and commands are defined here...
   private final Climber climber = new Climber();
   private final Drivetrain drivetrain = new Drivetrain();
   private final Indexer indexer = new Indexer();
-  private final Lifter lift = new Lifter();
   private final PowerAndPneumatics power = new PowerAndPneumatics();
   private final Shooters shooters = new Shooters();
   private final Vision vision = new Vision();
@@ -54,8 +58,9 @@ public class RobotContainer {
 
   private final Joystick left = new Joystick(0);
   private final Joystick right = new Joystick(1);
+  private final Joystick bb = new Joystick(2);
 
-  private final BooleanSupplier shooterReady = ()->{return shooters.atSetpoint()&&lift.getController().atSetpoint();};
+  private final BooleanSupplier shooterReady = ()->{return shooters.atSetpoint();};
   //private final ConditionalCommand autoFeedShooters = new ConditionalCommand(belt.reverse, belt.stop, shooterReady);
   //private final ParallelCommandGroup intakeBoth = new ParallelCommandGroup(intake.forward, belt.forward);
 
@@ -67,6 +72,15 @@ public class RobotContainer {
 
   private final InstantCommand extendLiftArm = new InstantCommand(()->{climber.extendLifterSolenoid();}, climber);
   private final InstantCommand retrackLiftArm = new InstantCommand(()->{climber.retrackLifterSolenoid();}, climber);
+
+  SequentialCommandGroup taxiBack(double time, double speed){
+    return new SequentialCommandGroup(
+      new RunCommand(()->drivetrain.computerDrive(speed, 0), drivetrain).withTimeout(time),
+      new InstantCommand(()->{drivetrain.STOP();drivetrain.brake();}, drivetrain),
+      new WaitCommand(1),
+      new InstantCommand(()->drivetrain.idle(), drivetrain)
+    );
+  }
   //TODO add magnatude supplier
   //private final AlignToBall alignToBall = new AlignToBall(drivetrain, ()->0, vision.getResults().getBestTarget()::getYaw);
 
@@ -77,10 +91,14 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
-      //drivetrain.setDefaultCommand(
-      //  //new RunCommand(()->drivetrain.drive(controller.getLeftY(),controller.getRightX()), drivetrain)
-      //  new RunCommand(()->{drivetrain.drive(.6*left.getY(), .45*right.getX());}, drivetrain)
-      //);
+    drivetrain.setDefaultCommand(
+      //new RunCommand(()->drivetrain.drive(controller.getLeftY(),controller.getRightX()), drivetrain)
+      
+      new RunCommand(()->{drivetrain.drive(
+        -leftlimiter.calculate(Constants.joystickTune(left.getY())), 
+        rightlimiter.calculate(Constants.joystickTune(.6*right.getX()))
+      );}, drivetrain)
+    );
     //lift.setDefaultCommand(new InstantCommand(()->{lift.setAngle(LifterConstants.kOffSet, false);}, lift));
     //shooters.setDefaultCommand(new InstantCommand(()->{shooters.STOP();}, shooters));
     //vision.setDefaultCommand(
@@ -99,27 +117,50 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+
+    new Button(()->bb.getRawButton(1)).whenPressed(
+      new InstantCommand(()->indexer.intakeForward(), indexer)
+    ).whenReleased(
+      new InstantCommand(()->indexer.intakeSTOP(), indexer)
+    );
+
+    new Button(()->bb.getRawButton(12)).whileHeld(
+      new InstantCommand(()->power.compressorOn(), power)
+    ).whenReleased(
+      new InstantCommand(()->power.compressorOff(), power)
+    );
+
+    new Button(()->bb.getRawButton(7)).whenPressed(
+      //new InstantCommand(()->shooters.setVolts(-7.), shooters)
+      //Kentwood -8.5
+      new InstantCommand(()->shooters.shoot(-7), shooters)
+    ).whenReleased(
+      new InstantCommand(()->shooters.STOP(), shooters)
+    );
+
+    new Button(()->bb.getRawButton(6)).whenPressed(
+      new RunCommand(()->indexer.beltReverse(), indexer)
+    ).whenReleased(
+      new InstantCommand(()->indexer.beltSTOP(), indexer)
+    );
+
+
+    new Button(()->bb.getRawButton(4)).whenPressed(extendLiftArm);
+    new Button(()->bb.getRawButton(8)).whenPressed(retrackLiftArm);
+
+
     new Button(()->right.getPOV()==0).whenPressed(extendArm);
-    new Button(()->right.getPOV()==90).whenPressed(extendLiftArm);
+    //new Button(()->right.getPOV()==90).whenPressed(extendLiftArm);
     new Button(()->right.getPOV()==180).whenPressed(retrackArm);
-    new Button(()->right.getPOV()==270).whenPressed(retrackLiftArm);
+    //new Button(()->right.getPOV()==270).whenPressed(retrackLiftArm);
+
+    new Button(()->left.getRawButton(1))
+      .whenPressed(()->{drivetrain.setMaxOutput(1);})
+      .whenReleased(()->{drivetrain.setMaxOutput(.6);});
+
+    new Button(()->right.getRawButton(1))
+      .whenPressed(()->{drivetrain.STOP();});
     
-    new Button(()->right.getRawButton(8)).whenPressed(
-      ()->{
-        lift.enable();
-        lift.setGoal(.7);
-      },lift
-    );
-    new Button(()->right.getRawButton(10)).whenPressed(
-      ()->{
-        lift.setGoal(LifterConstants.kOffSet);
-      },lift
-    );
-    new Button(()->right.getRawButton(12)).whenPressed(
-      ()->{
-        lift.STOP();
-      },lift
-    );
     new Button(()->right.getRawButton(11)).whenPressed(
       ()->{indexer.beltReverse();}
     ).whenReleased(
@@ -127,7 +168,8 @@ public class RobotContainer {
     );
     new Button(()->right.getRawButton(7)).whenPressed(
       ()->{
-        shooters.shoot(-12);
+        //shooters.shoot(-10);
+        shooters.setVolts(12);
       },shooters
     );
     new Button(()->right.getRawButton(9)).whenPressed(
@@ -162,13 +204,15 @@ public class RobotContainer {
       )
     );
     new Button(()->left.getRawButton(3)).whenPressed(
-      ()->{
-        indexer.intakeReverse();
-      },indexer
+      new ParallelCommandGroup(
+        new InstantCommand(()->shooters.setVolts(-3), shooters),
+        new InstantCommand(()->indexer.VOMIT(), indexer)
+      )
     ).whenReleased(
-      ()->{
-        indexer.intakeSTOP();
-      }
+      new ParallelCommandGroup(
+        new InstantCommand(()->shooters.STOP(), shooters),
+        new InstantCommand(()->{indexer.beltSTOP();indexer.intakeSTOP();}, indexer)
+      )    
     );
     //Network
     //Left Stick
@@ -183,6 +227,29 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return null;
+    return taxiBack(1.5, -.225)
+      .andThen(extendArm)
+      .andThen(new InstantCommand(
+        ()->{shooters.shoot(-7.5);}, shooters))
+      .andThen(new WaitCommand(2))
+      .andThen(new RunCommand(()->indexer.beltReverse(), indexer).withTimeout(2))
+      .andThen(new InstantCommand(()->indexer.beltSTOP(),indexer))
+      .andThen(new InstantCommand(()->shooters.STOP(),shooters));
+      
+    //return null;
   }
+  /**
+   * s12 - climber safety switch
+   * s13 - compressor toggle
+   * b00 - intake in
+   * b01 - belt in
+   * b02 - shooter in
+   * b03 - climb up
+   * b10 - intake out
+   * b11 - belt reverse
+   * b12 - shoot
+   * b13 - climb down
+   * b20 - scoop up
+   * b21 - scoop down
+   */
 }

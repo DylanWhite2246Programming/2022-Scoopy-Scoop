@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
@@ -49,7 +50,7 @@ public class Drivetrain extends SubsystemBase {
     );
 
   private final PIDController controller 
-    = new PIDController(1, 0, .1);
+    = new PIDController(.5, 0, .05);
 
   /** Creates a new ExampleSubsystem. */
   public Drivetrain() {
@@ -72,11 +73,23 @@ public class Drivetrain extends SubsystemBase {
   
   public void setMaxOutput(double maxOutput){drive.setMaxOutput(maxOutput);}
   public void STOP(){drive.stopMotor();}
+  public void brake(){
+     left1.setIdleMode(IdleMode.kBrake);
+     left2.setIdleMode(IdleMode.kBrake);
+    right1.setIdleMode(IdleMode.kBrake);
+    right2.setIdleMode(IdleMode.kBrake);
+  }
+  public void idle(){
+     left1.setIdleMode(IdleMode.kCoast);
+     left2.setIdleMode(IdleMode.kCoast);
+    right1.setIdleMode(IdleMode.kCoast);
+    right2.setIdleMode(IdleMode.kCoast);
+  }
   
   public void drive(double x, double z){
     //if(z==0){//inputs must be pasted through deadzone filter.
     //  drive.arcadeDrive(x, controller.calculate(getChassisSpeed().omegaRadiansPerSecond), false);
-    //}else{}
+    //}else{drive.arcadeDrive(x, z, false);}
     drive.arcadeDrive(x, z, false);
   }
   public void computerDrive(double x, double z){
@@ -144,6 +157,8 @@ public class Drivetrain extends SubsystemBase {
 
   public PIDController getTurnController(){return controller;}
 
+  public void feed(){drive.feed();}
+
 
   @Override
   public void periodic() {
@@ -153,6 +168,18 @@ public class Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("Rot Speed", getChassisSpeed().omegaRadiansPerSecond);
     SmartDashboard.putNumber("Heading", getHeadingRads());
     SmartDashboard.putNumber("Turn Rate", getTurnRateRad());
+    SmartDashboard.putNumber("Left Motor Temp", 
+      (
+       left1.getMotorTemperature()+
+       left2.getMotorTemperature()
+      )/2
+    );
+    SmartDashboard.putNumber("Right Motor Temp", 
+      (
+        right1.getMotorTemperature()+
+        right2.getMotorTemperature() 
+      )/2
+    );
   }
 
   @Override
