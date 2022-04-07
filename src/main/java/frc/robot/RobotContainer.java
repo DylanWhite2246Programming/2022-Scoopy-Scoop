@@ -13,7 +13,6 @@ import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.PowerAndPneumatics;
 import frc.robot.subsystems.Shooters;
-import frc.robot.team2246.NetworktableHandeler;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -58,7 +57,7 @@ public class RobotContainer {
 
   private final InstantCommand scoopUp = new InstantCommand(()->power.scoopUp(), power);
   private final InstantCommand scoopDown = new InstantCommand(()->power.scoopDown(), power);
-  
+
   private final InstantCommand climbUp = new InstantCommand(()->power.climberUp(), power);
   private final InstantCommand climbDown = new InstantCommand(()->power.climbDown(), power);
 
