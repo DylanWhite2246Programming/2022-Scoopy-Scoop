@@ -17,7 +17,6 @@ import frc.robot.Constants.LifterConstants;
 import frc.robot.Constants.MotorControllerValues;
 import frc.robot.Constants.Ports;
 import frc.robot.commands.AlignToBall;
-import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.PowerAndPneumatics;
@@ -45,7 +44,6 @@ public class RobotContainer {
   private final SlewRateLimiter rightlimiter = new SlewRateLimiter(1.2);
   
   // The robot's subsystems and commands are defined here...
-  private final Climber climber = new Climber();
   private final Drivetrain drivetrain = new Drivetrain();
   private final Indexer indexer = new Indexer();
   private final PowerAndPneumatics power = new PowerAndPneumatics();
@@ -67,11 +65,10 @@ public class RobotContainer {
   private final InstantCommand startShooter = new InstantCommand(()->{shooters.shoot(MotorControllerValues.kShooterVelocity);}, shooters);
   private final InstantCommand stopShooter = new InstantCommand(()->{shooters.STOP();}, shooters);
 
-  private final InstantCommand extendArm = new InstantCommand(()->{climber.extendBackSolenoid();}, climber);
-  private final InstantCommand retrackArm = new InstantCommand(()->{climber.retrackBackSolenoid();}, climber);
-
-  private final InstantCommand extendLiftArm = new InstantCommand(()->{climber.extendLifterSolenoid();}, climber);
-  private final InstantCommand retrackLiftArm = new InstantCommand(()->{climber.retrackLifterSolenoid();}, climber);
+  private final InstantCommand scoopUp = new InstantCommand(()->power.scoopUp(), power);
+  private final InstantCommand scoopDown = new InstantCommand(()->power.scoopDown(), power);
+  private final InstantCommand climbUp = new InstantCommand(()->power.climberUp(), power);
+  private final InstantCommand climbDown = new InstantCommand(()->power.climbDown(), power);
 
   SequentialCommandGroup taxiBack(double time, double speed){
     return new SequentialCommandGroup(
@@ -133,7 +130,7 @@ public class RobotContainer {
     new Button(()->bb.getRawButton(7)).whenPressed(
       //new InstantCommand(()->shooters.setVolts(-7.), shooters)
       //Kentwood -8.5
-      new InstantCommand(()->shooters.shoot(-7), shooters)
+      new InstantCommand(()->shooters.shoot(MotorControllerValues.kShooterVelocity), shooters)
     ).whenReleased(
       new InstantCommand(()->shooters.STOP(), shooters)
     );
@@ -145,38 +142,21 @@ public class RobotContainer {
     );
 
 
-    new Button(()->bb.getRawButton(4)).whenPressed(extendLiftArm);
-    new Button(()->bb.getRawButton(8)).whenPressed(retrackLiftArm);
+    new Button(()->bb.getRawButton(4)).whenPressed(climbUp);
+    new Button(()->bb.getRawButton(8)).whenPressed(climbDown);
 
 
-    new Button(()->right.getPOV()==0).whenPressed(extendArm);
-    //new Button(()->right.getPOV()==90).whenPressed(extendLiftArm);
-    new Button(()->right.getPOV()==180).whenPressed(retrackArm);
-    //new Button(()->right.getPOV()==270).whenPressed(retrackLiftArm);
+    new Button(()->right.getPOV()==0).whenPressed(scoopUp);
+    new Button(()->right.getPOV()==180).whenPressed(scoopDown);
 
     new Button(()->left.getRawButton(1))
       .whenPressed(()->{drivetrain.setMaxOutput(1);})
       .whenReleased(()->{drivetrain.setMaxOutput(.6);});
-
-    new Button(()->right.getRawButton(1))
-      .whenPressed(()->{drivetrain.STOP();});
     
-    new Button(()->right.getRawButton(11)).whenPressed(
-      ()->{indexer.beltReverse();}
-    ).whenReleased(
-      ()->{indexer.beltSTOP();}
-    );
-    new Button(()->right.getRawButton(7)).whenPressed(
-      ()->{
-        //shooters.shoot(-10);
-        shooters.setVolts(12);
-      },shooters
-    );
-    new Button(()->right.getRawButton(9)).whenPressed(
-      ()->{
-        shooters.STOP();
-      },shooters
-    );
+    new Button(()->right.getRawButton(1))
+      .whenPressed(()->{drivetrain.setMaxOutput(.3);})
+      .whenReleased(()->{drivetrain.setMaxOutput(.6);});
+    
     new Button(()->left.getRawButton(2)).whenPressed(
       new ParallelCommandGroup(
         new RunCommand(()->{
@@ -228,7 +208,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return taxiBack(1.5, -.225)
-      .andThen(extendArm)
+      .andThen(scoopUp)
       .andThen(new InstantCommand(
         ()->{shooters.shoot(-7.5);}, shooters))
       .andThen(new WaitCommand(2))
