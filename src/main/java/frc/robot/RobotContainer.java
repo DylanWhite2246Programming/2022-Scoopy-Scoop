@@ -28,7 +28,7 @@ import edu.wpi.first.wpilibj2.command.button.Button;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  private final SlewRateLimiter leftlimiter = new SlewRateLimiter(.75);
+  private final SlewRateLimiter leftlimiter = new SlewRateLimiter(.8);
   private final SlewRateLimiter rightlimiter = new SlewRateLimiter(1.2);
   
   // The robot's subsystems and commands are defined here...
