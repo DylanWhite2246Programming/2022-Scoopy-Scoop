@@ -27,7 +27,7 @@ public class Shooters extends SubsystemBase {
     Ports.kRightShooterEncoderPorts[1], 
     ScoopConstants.kRightEncoderReversed
   );
-  //TODO change
+  
   private final SimpleMotorFeedforward leftFeedForward 
     = new SimpleMotorFeedforward(-.59328, .98916, 3.6831);
   
