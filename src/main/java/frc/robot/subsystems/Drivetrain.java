@@ -4,20 +4,14 @@
 
 package frc.robot.subsystems;
 
-import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
-import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -35,7 +29,7 @@ public class Drivetrain extends SubsystemBase {
   private final CANSparkMax right2
     = new CANSparkMax(Ports.kRight2CANID, MotorType.kBrushless);
 
-  private final AHRS NAVX = new AHRS();
+  //private final AHRS NAVX = new AHRS();
   
   private final DifferentialDrive drive 
     = new DifferentialDrive(left1, right1);
@@ -43,11 +37,11 @@ public class Drivetrain extends SubsystemBase {
   private final DifferentialDriveKinematics kinematics 
     = new DifferentialDriveKinematics(DrivetrainConstants.kTrackWidth);
   
-  private DifferentialDriveOdometry odometry 
-    = new DifferentialDriveOdometry(
-      getRotation2d(), 
-      new Pose2d(0, 0, new Rotation2d(0))
-    );
+  //private DifferentialDriveOdometry odometry 
+  //  = new DifferentialDriveOdometry(
+  //    getRotation2d(), 
+  //    new Pose2d(0, 0, new Rotation2d(0))
+  //  );
 
   private final PIDController controller 
     = new PIDController(.5, 0, .05);
@@ -68,9 +62,11 @@ public class Drivetrain extends SubsystemBase {
     left1.getEncoder().setVelocityConversionFactor(DrivetrainConstants.kDistancePerRotation/60);
     right1.getEncoder().setVelocityConversionFactor(DrivetrainConstants.kDistancePerRotation/60);
 
-    NAVX.setAngleAdjustment(0);
+    //NAVX.setAngleAdjustment(0);
+
+    drive.setSafetyEnabled(false);
   }
-  
+  public void setSafety(boolean safe){drive.setSafetyEnabled(safe);};
   public void setMaxOutput(double maxOutput){drive.setMaxOutput(maxOutput);}
   public void STOP(){drive.stopMotor();}
   public void brake(){
@@ -133,27 +129,27 @@ public class Drivetrain extends SubsystemBase {
     );
   }
   
-  public Pose2d getPose(){return odometry.getPoseMeters();}
-  public double getDistanceTo(Translation2d place){
-    return place.getDistance(getPose().getTranslation());
-  }
+  //public Pose2d getPose(){return odometry.getPoseMeters();}
+  //public double getDistanceTo(Translation2d place){
+  //  return place.getDistance(getPose().getTranslation());
+  //}
   
-  public void resetOdometery(Pose2d pose){
-    resetEncoders();
-    odometry.resetPosition(pose, NAVX.getRotation2d());
-  }
+  //public void resetOdometery(Pose2d pose){
+  //  resetEncoders();
+  //  odometry.resetPosition(pose, NAVX.getRotation2d());
+  //}
 
-  public void zeroHeading(){NAVX.reset();}
-  public Rotation2d getRotation2d(){return NAVX.getRotation2d();}
+  //public void zeroHeading(){NAVX.reset();}
+  //public Rotation2d getRotation2d(){return NAVX.getRotation2d();}
   /**Degrees */
-  public double getHeading(){return getRotation2d().getDegrees();}
+  //public double getHeading(){return getRotation2d().getDegrees();}
   /**Radians */
-  public double getHeadingRads(){return NAVX.getRotation2d().getRadians();}
+  //public double getHeadingRads(){return NAVX.getRotation2d().getRadians();}
   /**Radians relative only to robot does not include starting pose*/
-  public double getAbsoluteHeading(){return Math.toRadians(NAVX.getAngleAdjustment());}
+  //public double getAbsoluteHeading(){return Math.toRadians(NAVX.getAngleAdjustment());}
 
-  public double getTurnRate(){return -NAVX.getRate();}
-  public double getTurnRateRad(){return Units.degreesToRadians(getTurnRate());}
+  //public double getTurnRate(){return -NAVX.getRate();}
+  //public double getTurnRateRad(){return Units.degreesToRadians(getTurnRate());}
 
   public PIDController getTurnController(){return controller;}
 
@@ -163,11 +159,11 @@ public class Drivetrain extends SubsystemBase {
   @Override
   public void periodic() {
     //TODO add network table stuff
-    odometry.update(getRotation2d(), getLeftDistance(), getRightDistance());
+    //odometry.update(getRotation2d(), getLeftDistance(), getRightDistance());
     SmartDashboard.putNumber("Velocity", getChassisSpeed().vxMetersPerSecond);
     SmartDashboard.putNumber("Rot Speed", getChassisSpeed().omegaRadiansPerSecond);
-    SmartDashboard.putNumber("Heading", getHeadingRads());
-    SmartDashboard.putNumber("Turn Rate", getTurnRateRad());
+    //SmartDashboard.putNumber("Heading", getHeadingRads());
+    //SmartDashboard.putNumber("Turn Rate", getTurnRateRad());
     SmartDashboard.putNumber("Left Motor Temp", 
       (
        left1.getMotorTemperature()+

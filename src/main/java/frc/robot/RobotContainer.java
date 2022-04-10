@@ -45,7 +45,7 @@ public class RobotContainer {
 
   private final InstantCommand intakeShooter = new InstantCommand(()->shooters.setVolts(MotorControllerValues.kShooterIntakeValue), shooters);
   private final InstantCommand startShooter = new InstantCommand(()->{shooters.shoot(MotorControllerValues.kShooterVelocity);}, shooters);
-  private final InstantCommand stopShooter = new InstantCommand(()->{shooters.STOP();}, shooters);
+  private final InstantCommand stopShooter = new InstantCommand(()->{shooters.shoot(0);shooters.STOP();}, shooters);
 
   private final InstantCommand intake = new InstantCommand(()->indexer.intakeForward(), indexer);
   private final InstantCommand reverseIntake = new InstantCommand(()->indexer.beltReverse(), indexer);
@@ -61,14 +61,41 @@ public class RobotContainer {
   private final InstantCommand climbUp = new InstantCommand(()->power.climberUp(), power);
   private final InstantCommand climbDown = new InstantCommand(()->power.climbDown(), power);
 
-  SequentialCommandGroup taxiBack(double time, double speed){
-    return new SequentialCommandGroup(
-      new RunCommand(()->drivetrain.computerDrive(speed, 0), drivetrain).withTimeout(time),
-      new InstantCommand(()->{drivetrain.STOP();drivetrain.brake();}, drivetrain),
-      new WaitCommand(1),
-      new InstantCommand(()->drivetrain.idle(), drivetrain)
-    );
-  }
+  //private final SequentialCommandGroup auto = new SequentialCommandGroup(
+  //  //taxiBack(1.5, -.225),
+  //  //new InstantCommand(()->drivetrain.setSafety(false), drivetrain),
+  //    new RunCommand(()->drivetrain.computerDrive(-.225, 0), drivetrain).withTimeout(1.5),
+  //    //new RunCommand(()->drivetrain.feed(),drivetrain).withTimeout(1.5),
+  //    new InstantCommand(()->{
+  //      drivetrain.STOP();
+  //      drivetrain.brake();
+  //      drivetrain.setSafety(true);
+  //    }, drivetrain),
+  //    new WaitCommand(1),
+  //    new InstantCommand(()->drivetrain.idle(), drivetrain),
+//
+  //  scoopUp,
+  //  new InstantCommand(()->{shooters.shoot(-7.5);}, shooters),
+  //  new WaitCommand(2),
+  //  new RunCommand(()->indexer.beltReverse(), indexer).withTimeout(2),
+  //  new InstantCommand(()->indexer.beltSTOP(),indexer),
+  //  new InstantCommand(()->shooters.STOP(),shooters)
+  //);
+
+  //SequentialCommandGroup taxiBack(double time, double speed){
+  //  return new SequentialCommandGroup(
+  //    new InstantCommand(()->drivetrain.setSafety(false), drivetrain),
+  //    new InstantCommand(()->drivetrain.computerDrive(speed, 0), drivetrain),
+  //    new RunCommand(()->drivetrain.feed(),drivetrain).withTimeout(time),
+  //    new InstantCommand(()->{
+  //      drivetrain.STOP();
+  //      drivetrain.brake();
+  //      drivetrain.setSafety(true);
+  //    }, drivetrain),
+  //    new WaitCommand(1),
+  //    new InstantCommand(()->drivetrain.idle(), drivetrain)
+  //  );
+  //}
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -79,7 +106,7 @@ public class RobotContainer {
       
       new RunCommand(()->{drivetrain.drive(
         -leftlimiter.calculate(Constants.joystickTune(left.getY())), 
-        rightlimiter.calculate(Constants.joystickTune(.6*right.getX()))
+        rightlimiter.calculate(Constants.joystickTune(.7333333*right.getX()))
       );}, drivetrain)
     );
   }
@@ -180,14 +207,46 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return taxiBack(1.5, -.225)
-      .andThen(scoopUp)
-      .andThen(new InstantCommand(
-        ()->{shooters.shoot(-7.5);}, shooters))
-      .andThen(new WaitCommand(2))
-      .andThen(new RunCommand(()->indexer.beltReverse(), indexer).withTimeout(2))
-      .andThen(new InstantCommand(()->indexer.beltSTOP(),indexer))
-      .andThen(new InstantCommand(()->shooters.STOP(),shooters));
+    return 
+    new RunCommand(()->drivetrain.computerDrive(-.2, 0), drivetrain).withTimeout(2.55)
+    .andThen(new InstantCommand(()->{
+      drivetrain.STOP();
+      drivetrain.brake();
+      //drivetrain.setSafety(true);
+    }, drivetrain))
+    .andThen(new WaitCommand(1))
+    .andThen(new InstantCommand(()->drivetrain.idle(), drivetrain))
+    //.andThen(scoopUp)//-8.2
+    .andThen(new InstantCommand(()->shooters.shoot(-9.35), shooters))
+    .andThen(new WaitCommand(3))
+    .andThen(new InstantCommand(()->indexer.beltReverse(), indexer))
+    .andThen(new WaitCommand(2))
+    .andThen(new InstantCommand(()->indexer.beltSTOP(), indexer))
+    .andThen(new InstantCommand(()->{shooters.shoot(0);shooters.STOP();}, shooters));
+    
+    //return new InstantCommand(()->System.out.print("test") , drivetrain);
+    //return new SequentialCommandGroup(
+    //  //taxiBack(1.5, -.225),
+    //  //new InstantCommand(()->drivetrain.setSafety(false), drivetrain),
+    //    new RunCommand(()->drivetrain.computerDrive(-.225, 0), drivetrain).withTimeout(1.5),
+    //    //new RunCommand(()->drivetrain.feed(),drivetrain).withTimeout(1.5),
+    //    new InstantCommand(()->{
+    //      drivetrain.STOP();
+    //      drivetrain.brake();
+    //      //drivetrain.setSafety(true);
+    //    }, drivetrain),
+    //    new WaitCommand(1),
+    //    new InstantCommand(()->drivetrain.idle(), drivetrain),
+  //
+    //  scoopUp,
+    //  new InstantCommand(()->{shooters.shoot(-7.5);}, shooters),
+    //  new WaitCommand(2),
+    //  reverseBelt,
+    //  new WaitCommand(2),
+    //  stopBelt,
+    //  new InstantCommand(()->shooters.STOP(),shooters)
+    //);//.andThen(new InstantCommand(()->auto.close, requirements));
+//
       
     //return null;
   }

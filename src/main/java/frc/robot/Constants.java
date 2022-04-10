@@ -49,7 +49,7 @@ public final class Constants {
             public static final int kIntakeCANID = 11;
         //PH ports
         public static final int[] scoopSolenoidPort = new int[]{12,13};
-        public static final int[] climberSolenoidPort = new int[]{15,14};
+        public static final int[] climberSolenoidPort = new int[]{14,15};
         //DIO might be unnessisary
         public static final int[] kLeftShooterEncoderPorts = new int[]{0,1};
         public static final int[] kRightShooterEncoderPorts = new int[]{2,3};
@@ -158,9 +158,9 @@ public final class Constants {
         public static final boolean kInverted = false;
     }
     public static final class MotorControllerValues{
-        public static final double kIntakeValue = .9;
+        public static final double kIntakeValue = 1;
         public static final double kShooterIntakeValue = .55*12;
         /**meters per second */
-        public static final double kShooterVelocity = 7.75;
+        public static final double kShooterVelocity = -7.75;
     }
 }
