@@ -130,7 +130,9 @@ public class RobotContainer {
     //B11
     new Button(()->bb.getRawButton(6)).whenPressed(reverseBelt).whenReleased(stopBelt);
     //B12
-    new Button(()->bb.getRawButton(7)).whenPressed(startShooter).whenReleased(stopShooter);
+    new Button(()->bb.getRawButton(7)).whenPressed(
+      new InstantCommand(()->{shooters.setVolts(-12);}, shooters)
+    ).whenReleased(stopShooter);
     //B13
     new Button(()->bb.getRawButton(8)).whenPressed(climbDown);
     //B20
