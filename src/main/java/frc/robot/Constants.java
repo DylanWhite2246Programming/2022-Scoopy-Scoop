@@ -17,6 +17,7 @@ import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
+import edu.wpi.first.math.util.Units;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -79,19 +80,19 @@ public final class Constants {
     }
 
     public static final class AutonCommandConstants{
-        public static final double kMaxVoltage = 10.0;
+        public static final double kMaxVoltage = 12.0;
         /**meters/s */
-        public static final double kMaxSpeed = 2.0;
+        public static final double kMaxSpeed = .4;
         /**meters/s^2 */
-        public static final double kMaxAcceleration = 1.0;
+        public static final double kMaxAcceleration = .1;
         
 
         public static final SimpleMotorFeedforward feedForward
-            = new SimpleMotorFeedforward(0, 0, 0);
+            = new SimpleMotorFeedforward(.16041, 2.8189, .60863);
         public static final PIDController leftController
-            = new PIDController(1, 0, .1);
+            = new PIDController(3.9138, 0, 0);
         public static final PIDController rightController
-            = new PIDController(1, 0, .1);
+            = new PIDController(3.0432, 0, 0);
         public static final DifferentialDriveVoltageConstraint kVoltageConstraints
             = new DifferentialDriveVoltageConstraint(
                 feedForward, 
@@ -109,7 +110,7 @@ public final class Constants {
     }
     public static final class DrivetrainConstants{
         //chassis stuff
-        public static final double kTrackWidth = 0;
+        public static final double kTrackWidth = 18/39.37;
         /**meters */
         public static final double kWheelDiameter = 6/39.37;
         /**meters */

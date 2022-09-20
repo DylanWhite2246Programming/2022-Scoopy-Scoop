@@ -4,10 +4,21 @@
 
 package frc.robot;
 
+import java.util.List;
+
+import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.Trajectory;
+import edu.wpi.first.math.trajectory.TrajectoryConfig;
+import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import frc.robot.Constants.AutonCommandConstants;
+import frc.robot.Constants.DrivetrainConstants;
 import frc.robot.Constants.MotorControllerValues;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Indexer;
@@ -16,6 +27,7 @@ import frc.robot.subsystems.Shooters;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Button;
@@ -202,13 +214,38 @@ public class RobotContainer {
     //Buttons
   }
 
+  Trajectory trajectory = TrajectoryGenerator.generateTrajectory(
+    new Pose2d(0, 0, Rotation2d.fromDegrees(0)), 
+    List.of(new Translation2d(.75,-.75), new Translation2d(1.5, .75)), 
+    new Pose2d(2.25,0, Rotation2d.fromDegrees(0)), 
+    AutonCommandConstants.trajectoryConfig);
+
+
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
     return 
+    new InstantCommand(()->{
+      drivetrain.zeroHeading();
+      drivetrain.resetOdometery(new Pose2d(0,0, Rotation2d.fromDegrees(0)));
+      drivetrain.resetEncoders();
+    }, drivetrain).andThen(
+    new RamseteCommand(
+      trajectory, 
+      drivetrain::getPose, 
+      AutonCommandConstants.controller, 
+      AutonCommandConstants.feedForward, 
+      drivetrain.kinematics, 
+      drivetrain::getWheelSpeeds, 
+      AutonCommandConstants.leftController, 
+      AutonCommandConstants.rightController, 
+      drivetrain::driveVolts, 
+      drivetrain))
+      .andThen(new InstantCommand(()->{drivetrain.STOP();drivetrain.idle();}, drivetrain));
+
+    /*
     new RunCommand(()->drivetrain.computerDrive(-.2, 0), drivetrain).withTimeout(2.55)
     .andThen(new InstantCommand(()->{
       drivetrain.STOP();
@@ -224,7 +261,8 @@ public class RobotContainer {
     .andThen(new WaitCommand(2))
     .andThen(new InstantCommand(()->indexer.beltSTOP(), indexer))
     .andThen(new InstantCommand(()->{shooters.shoot(0);shooters.STOP();}, shooters));
-    
+    */
+
     //return new InstantCommand(()->System.out.print("test") , drivetrain);
     //return new SequentialCommandGroup(
     //  //taxiBack(1.5, -.225),

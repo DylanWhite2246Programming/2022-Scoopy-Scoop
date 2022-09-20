@@ -40,7 +40,7 @@ public class Drivetrain extends SubsystemBase {
   private final DifferentialDrive drive 
     = new DifferentialDrive(left1, right1);
 
-  private final DifferentialDriveKinematics kinematics 
+  public final DifferentialDriveKinematics kinematics 
     = new DifferentialDriveKinematics(DrivetrainConstants.kTrackWidth);
   
   private DifferentialDriveOdometry odometry 
