@@ -4,49 +4,32 @@
 
 package frc.robot.subsystems;
 
-import org.photonvision.PhotonCamera;
-import org.photonvision.targeting.PhotonPipelineResult;
-
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Vision extends SubsystemBase {
-  private static PhotonCamera cam = new PhotonCamera("cameraName");
-  private boolean overide = false; 
-  private int pipe;
+  
+  NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+  NetworkTableEntry camMode = table.getEntry("camMode");
+  NetworkTableEntry pipeLine = table.getEntry("pipeline");
+  NetworkTableEntry tv = table.getEntry("tv");
+  NetworkTableEntry tx = table.getEntry("tx");
+  NetworkTableEntry ty = table.getEntry("ty");
+  NetworkTableEntry ta = table.getEntry("ta");
+
+  boolean hasTarget(){return tv.getNumber(0).intValue()==1;}
+  double getX() {return tx.getDouble(0.0);}
+  double getY() {return ty.getDouble(0.0);}
+  double getArea() {return ta.getDouble(0.0);}
+
+  void setDrivermode(boolean set){camMode.setNumber(set?1:0);}
+  void setPipeline(int pipe){pipeLine.setNumber(pipe);}
+
   /** Creates a new Vision. */
   public Vision() {
-    setPipe();
-  }
-
-  public void setOveride(boolean overide, int pipe){
-    this.overide=overide;
-    this.pipe=pipe;
-    setPipe();
-  }
-  
-  /***
-   * @param index 0 drive mode, 1 blue, 2 red
-   */
-  public void setPipe(){
-    if(overide){
-      cam.setPipelineIndex(pipe);
-    }else{
-      if(DriverStation.getAlliance()==Alliance.Blue){
-        cam.setPipelineIndex(1);
-      }else if(DriverStation.getAlliance()==Alliance.Red){
-        cam.setPipelineIndex(2);
-      }else{
-        cam.setPipelineIndex(1);
-      }
-    }
-  }
-  public void setDriverMode(boolean value){
-    cam.setDriverMode(value);
-  }
-  public PhotonPipelineResult getResults(){
-    return cam.getLatestResult();
+    
   }
 
   @Override
